@@ -1,27 +1,24 @@
 import bcryptjs from 'bcryptjs';
 
-
 interface SeedProduct {
   description: string;
   images: string[];
-  inStock: number;
   price: number;
-  colors: ValidColor[];
   slug: string;
   tags: string[];
   title: string;
   category: ValidCategory;
+  downloadUrl: string;
 }
 
 interface SeedUser {
   email: string;
   password: string;
   name: string;
-  role: 'admin'|'user'
+  role: 'admin' | 'user';
 }
 
-type ValidColor = 'Rosa' | 'Negro' | 'Violeta' | 'Rojo' | 'Azul' | 'Gris' | 'Blanco';
-type ValidCategory = 'juguetes' | 'juegos' | 'lubricantes' | 'bdsm';
+type ValidCategory = 'lectura' | 'juegos' | 'escritura';
 
 interface SeedData {
   users: SeedUser[];
@@ -29,57 +26,34 @@ interface SeedData {
   products: SeedProduct[];
 }
 
-
-
-
 export const initialData: SeedData = {
-
   users: [
     {
-      email: 'fernando@google.com',
-      name: 'Fernando Herrera',
+      email: 'admin@psicoweb.com',
+      name: 'Admin',
       password: bcryptjs.hashSync('123456'),
-      role: 'admin'
+      role: 'admin',
     },
     {
-      email: 'melissa@google.com',
-      name: 'Melissa Flores',
+      email: 'user@psicoweb.com',
+      name: 'Usuario Test',
       password: bcryptjs.hashSync('123456'),
-      role: 'user'
+      role: 'user',
     },
-
-
   ],
 
+  categories: ['juguetes', 'juegos', 'lubricantes', 'bdsm'],
 
-  categories: [
-    'juguetes', 
-    'juegos', 
-    'lubricantes', 
-    'bdsm'
-  ],
   products: [
     {
-      title: "Vibrador Rabbit Premium",
-      description: "Vibrador con estimulador de clítoris de silicona médica.",
-      images: ['vibrador-app.webp','vibrador-app-2.webp'],
-      inStock: 15,
-      price: 1890,
-      colors: ['Rosa', 'Violeta'], // <--- Solo acepta ValidColor
-      slug: "vibrador-rabbit-premium",
-      tags: ['vibrador', 'clitoris'],
-      category: 'juguetes' // <--- Solo acepta ValidCategory
+      title: 'E-book de Ejemplo',
+      description: 'Descripción del e-book de ejemplo.',
+      images: ['https://res.cloudinary.com/demo/image/upload/sample.jpg'],
+      price: 990,
+      slug: 'ebook-de-ejemplo',
+      tags: ['psicologia'],
+      category: 'juegos',
+      downloadUrl: 'https://www.example.com/ebook.pdf',
     },
-    {
-      title: "Lubricante de Frutilla",
-      description: "Lubricante efecto calor sabor frutilla.",
-      images: ['vibrador-doble-estimulo-negro.webp','vibrador-doble-estimulo-2'],
-      inStock: 20,
-      price: 550,
-      colors: ['Rojo'],
-      slug: "lubricante-frutilla",
-      tags: ['lubricante', 'calor'],
-      category: 'lubricantes'
-    }
-  ]
+  ],
 };
