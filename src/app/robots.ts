@@ -6,13 +6,12 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       disallow: [
-        '/admin/',    // Bloqueamos el panel de admin
-        '/auth/',     // Bloqueamos login/registro
-        '/profile/',  // Bloqueamos perfiles de usuario
-        '/checkout/', // Bloqueamos pasarela de pago
-        '/orders/',   // Bloqueamos órdenes privadas
+        '/admin/',
+        '/auth/',
+        '/profile/',
+        '/checkout/',
       ],
     },
-    sitemap: 'https://vibralover.com/sitemap.xml',
+    sitemap: `${process.env.NEXT_PUBLIC_URL ?? 'https://tu-dominio.com'}/sitemap.xml`,
   };
 }

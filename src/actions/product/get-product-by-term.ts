@@ -1,7 +1,6 @@
-// actions/product/get-products-by-term.ts
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
 export const getProductsByTerm = async (term: string) => {
   try {
@@ -12,21 +11,22 @@ export const getProductsByTerm = async (term: string) => {
           { title: { contains: term, mode: 'insensitive' } },
           { description: { contains: term, mode: 'insensitive' } },
           { tags: { has: term.toLowerCase() } },
-        ]
+        ],
       },
       include: {
         ProductImage: {
           take: 2,
-          select: { url: true }
-        }
+          select: { url: true },
+        },
       },
-      take: 12, 
+      take: 12,
     });
 
-    return products.map( product => ({
+    return products.map((product: typeof products[number]) => ({
       ...product,
-      images: product.ProductImage.map( img => img.url )
+      images: product.ProductImage.map((image: { url: string }) => image.url),
     }));
+
   } catch (error) {
     console.log(error);
     return [];

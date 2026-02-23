@@ -2,11 +2,11 @@ import { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://vibralover.com';
+  const baseUrl = process.env.NEXT_PUBLIC_URL ?? 'https://tu-dominio.com';
 
-  // 1. Productos reales de la DB
   const products = await prisma.product.findMany({
-    select: { slug: true }
+    where: { isPublished: true },
+    select: { slug: true, },
   });
 
   const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
@@ -15,10 +15,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // 2. Posts del blog que ya creaste
   const posts = await prisma.post.findMany({
     where: { isPublished: true },
-    select: { slug: true, updatedAt: true }
+    select: { slug: true, updatedAt: true },
   });
 
   const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
@@ -28,25 +27,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // 3. Rutas principales que SÍ existen
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: baseUrl, // Home
+      url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
-      url: `${baseUrl}/blog`, 
+      url: `${baseUrl}/blog`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'weekly',
       priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/envios`, 
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
     },
   ];
 

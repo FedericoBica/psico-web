@@ -1,7 +1,6 @@
 export const revalidate = 0;
 
 import { getPaginatedProductsWithImages } from "@/actions";
-import { getPaginatedProductsAdmin } from "@/actions/product/prod-pagination-admin";
 import { Pagination, ProductImage, Title } from "@/components";
 import { currencyFormat } from "@/utils";
 import Link from "next/link";
@@ -12,19 +11,20 @@ interface Props {
   };
 }
 
-export default async function ProductsPage({ searchParams }: Props) {
+export default async function AdminProductsPage({ searchParams }: Props) {
   const page = searchParams.page ? parseInt(searchParams.page) : 1;
 
-  const { products, currentPage, totalPages } =
-    await getPaginatedProductsAdmin({ page });
+  const { products, totalPages } = await getPaginatedProductsWithImages({ page });
+
+  type Product = typeof products[number];
 
   return (
     <>
-      <Title title="Mantenimiento de productos" />
+      <Title title="Productos" />
 
       <div className="flex justify-end mb-5">
         <Link href="/admin/product/new" className="btn-primary">
-          Nuevo producto
+          Nuevo E-book
         </Link>
       </div>
 
@@ -32,25 +32,15 @@ export default async function ProductsPage({ searchParams }: Props) {
         <table className="min-w-full">
           <thead className="bg-gray-200 border-b">
             <tr>
-              <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Imagen
-              </th>
-              <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Título
-              </th>
-              <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Precio
-              </th>
-              <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Inventario
-              </th>
-              <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Colores 
-              </th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Imagen</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Título</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Categoría</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Precio</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Estado</th>
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {products.map((product: Product) => (
               <tr
                 key={product.id}
                 className="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100"
@@ -58,7 +48,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   <Link href={`/product/${product.slug}`}>
                     <ProductImage
-                      src={ product.ProductImage[0]?.url }
+                      src={product.ProductImage[0]?.url}
                       width={80}
                       height={80}
                       alt={product.title}
@@ -74,22 +64,14 @@ export default async function ProductsPage({ searchParams }: Props) {
                     {product.title}
                   </Link>
                 </td>
+                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  {product.category}
+                </td>
                 <td className="text-sm font-bold text-gray-900 px-6 py-4 whitespace-nowrap">
                   {currencyFormat(product.price)}
                 </td>
-
-                <td className="text-sm text-gray-900 font-bold px-6 py-4 whitespace-nowrap">
-                  {product.inStock}
-                </td>
-
-                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                  { product.color.length > 0 
-                    ? product.color.join(", ") 
-                    : <span className="text-gray-400 italic">Sin colores</span> 
-                  }
-                </td>
                 <td className="text-sm px-6 py-4">
-                  { product.isPublished ? (
+                  {product.isPublished ? (
                     <span className="text-green-600 font-bold">Visible</span>
                   ) : (
                     <span className="text-red-400 italic">Oculto</span>

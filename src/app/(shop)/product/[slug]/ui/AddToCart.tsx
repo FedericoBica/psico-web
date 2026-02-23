@@ -15,29 +15,26 @@ export const AddToCart = ({ product }: Props) => {
 
   const addToCart = () => {
     const cartProduct: CartProduct = {
-      id: product.id,
-      slug: product.slug,
-      title: product.title,
-      price: product.price,
+      id:       product.id,
+      slug:     product.slug,
+      title:    product.title,
+      price:    product.price,
       quantity: quantity,
-      image: product.images[0],
+      image:    product.images[0],
     };
 
     addProductToCart(cartProduct);
-    setQuantity(1); // Reset
+    setQuantity(1);
   };
 
   return (
     <>
-      {/* Selector de Cantidad (opcional para digitales, pero útil si quieren comprar licencias) */}
-      <span className="mt-2 block">Cantidad</span>
-      <QuantitySelector 
-        quantity={quantity} 
-        onQuantityChanged={setQuantity} 
+      <span className="mt-2 block text-sm text-zinc-400">Cantidad</span>
+      <QuantitySelector
+        quantity={quantity}
+        onQuantityChanged={setQuantity}
       />
-
-      {/* Botón */}
-      <button 
+      <button
         onClick={addToCart}
         className="btn-primary w-full mt-5"
       >

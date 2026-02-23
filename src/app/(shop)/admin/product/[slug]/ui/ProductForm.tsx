@@ -1,8 +1,8 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { Product, Category } from '@/interfaces';
-import { createUpdateProduct } from '@/actions'; // Tu action simplificada
+import { createUpdateProduct } from '@/actions';
 import { useRouter } from 'next/navigation';
 
 interface Props {
@@ -15,10 +15,10 @@ interface FormInputs {
   slug: string;
   description: string;
   price: number;
-  oldPrice: number;
+  oldPrice?: number;  // ✅ sin null
   tags: string;
   categoryId: string;
-  downloadUrl: string; 
+  downloadUrl: string;
 }
 
 export const ProductForm = ({ product, categories }: Props) => {
@@ -30,26 +30,29 @@ export const ProductForm = ({ product, categories }: Props) => {
     formState: { isValid },
   } = useForm<FormInputs>({
     defaultValues: {
-      ...product,
-      tags: product.tags?.join(', '),
-      downloadUrl: (product as any).downloadUrl ?? '', // Cast temporal por TS
+      title:       product.title ?? '',
+      slug:        product.slug ?? '',
+      description: product.description ?? '',
+      price:       product.price ?? 0,
+      oldPrice:    product.oldPrice ?? undefined,  // ✅ null → undefined
+      tags:        product.tags?.join(', ') ?? '',
+      categoryId:  product.categoryId ?? '',
+      downloadUrl: (product as any).downloadUrl ?? '',
     },
   });
 
-  const onSubmit = async (data: FormInputs) => {
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const formData = new FormData();
-    
-    // Convertimos el objeto data a FormData para enviar a la Server Action
-    const { ...productToSave } = data;
+
     if (product.id) formData.append('id', product.id);
-    formData.append('title', productToSave.title);
-    formData.append('slug', productToSave.slug);
-    formData.append('description', productToSave.description);
-    formData.append('price', productToSave.price.toString());
-    formData.append('oldPrice', productToSave.oldPrice.toString());
-    formData.append('tags', productToSave.tags);
-    formData.append('categoryId', productToSave.categoryId);
-    formData.append('downloadUrl', productToSave.downloadUrl);
+    formData.append('title',       data.title);
+    formData.append('slug',        data.slug);
+    formData.append('description', data.description);
+    formData.append('price',       data.price.toString());
+    formData.append('oldPrice',    (data.oldPrice ?? 0).toString());
+    formData.append('tags',        data.tags);
+    formData.append('categoryId',  data.categoryId);
+    formData.append('downloadUrl', data.downloadUrl);
 
     const { ok, product: updatedProduct } = await createUpdateProduct(formData);
 
@@ -60,7 +63,6 @@ export const ProductForm = ({ product, categories }: Props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid px-5 mb-16 grid-cols-1 sm:px-0 sm:grid-cols-2 gap-3">
-      {/* Columna Izquierda: Info Principal */}
       <div className="w-full">
         <div className="flex flex-col mb-2">
           <span>Título del E-book</span>
@@ -88,7 +90,6 @@ export const ProductForm = ({ product, categories }: Props) => {
         </div>
       </div>
 
-      {/* Columna Derecha: Configuración Digital */}
       <div className="w-full">
         <div className="flex flex-col mb-2">
           <span>Categoría</span>
@@ -105,16 +106,17 @@ export const ProductForm = ({ product, categories }: Props) => {
           <input type="text" className="p-2 border rounded-md bg-gray-200" {...register('tags')} />
         </div>
 
-        {/* ✅ CAMPO ESTRATÉGICO */}
         <div className="flex flex-col mb-2">
           <span className="font-bold text-blue-700 text-lg">URL de Descarga (PDF/E-book)</span>
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="https://tu-almacenamiento.com/ebook.pdf"
-            className="p-2 border-2 border-blue-300 rounded-md bg-white" 
-            {...register('downloadUrl', { required: true })} 
+            className="p-2 border-2 border-blue-300 rounded-md bg-white"
+            {...register('downloadUrl', { required: true })}
           />
-          <p className="text-xs text-gray-500 mt-1 italic">Este link solo se mostrará al cliente una vez pagada la orden.</p>
+          <p className="text-xs text-gray-500 mt-1 italic">
+            Este link solo se mostrará al cliente una vez pagada la orden.
+          </p>
         </div>
 
         <button className="btn-primary w-full mt-5">Guardar E-book</button>

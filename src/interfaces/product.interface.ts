@@ -8,14 +8,9 @@ export interface Product {
   tags: string[];
   title: string;
   category: string;
-  categoryId: string
+  categoryId: string;
   isPublished: boolean;
-
-  isPremiumUI?: boolean;
-  rating: number;
-  reviewCount:number;
-
-  downloadUrl:string;
+  downloadUrl: string;
 }
 
 export interface CartProduct {
@@ -27,10 +22,8 @@ export interface CartProduct {
   image: string;
 }
 
-
 export interface ProductImage {
   id: number;
   url: string;
   productId: string;
 }
-

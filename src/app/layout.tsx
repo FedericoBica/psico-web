@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { inter } from "@/config/fonts";
-
 import "./globals.css";
-import { MetaPixel, Providers } from "@/components";
+import { Providers } from "@/components";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s - Vibra Lover",
-    default: "Tienda - Vibra Lover",
+    template: "%s - Psico Web",
+    default: "Tienda - Psico Web",
   },
-  description: "Sex Shop",
+  description: "Tienda de E-books",
 };
 
 export default function RootLayout({
@@ -18,10 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className={inter.className}>
-        <MetaPixel />
-
         <Providers>{children}</Providers>
       </body>
     </html>

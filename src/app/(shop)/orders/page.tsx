@@ -1,112 +1,79 @@
-import { notFound } from 'next/navigation';
-import { getOrderById } from '@/actions'; 
-import { Title, OrderStatus, MercadoPagoButton } from '@/components';
-import Image from 'next/image';
-import { currencyFormat } from '@/utils';
+export const revalidate = 0;
 
-interface Props {
-  params: {
-    id: string; // El ID viene de la URL (la carpeta se llama [id])
-  };
-}
+import { getOrdersByUser } from "@/actions";
+type Order = Awaited<ReturnType<typeof getOrdersByUser>>['orders'][number];
 
-export default async function OrderPage({ params }: Props) {
-  const { id } = params; // Extraemos el ID de la URL
+import { Title } from "@/components";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { IoCardOutline } from "react-icons/io5";
+import { currencyFormat } from "@/utils";
 
-  // 1. Obtener la información de la orden desde el servidor
-  const { ok, order } = await getOrderById(id);
 
-  if (!ok || !order) {
-    notFound();
+export default async function OrdersPage() {
+  const { ok, orders = [] } = await getOrdersByUser();
+
+  if (!ok) {
+    redirect("/auth/login");
   }
 
   return (
-    <div className="flex justify-center items-center mb-72 px-10 sm:px-0">
-      <div className="flex flex-col w-[1000px]">
-        {/* Usamos el ID de la URL para el título */}
-        <Title title={`Orden #${id.split('-')[0]}`} />
+    <>
+      <Title title="Mis Órdenes" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
-          
-          {/* Columna Izquierda: Listado de E-books */}
-          <div className="flex flex-col mt-5">
-            <OrderStatus isPaid={order.isPaid} />
-
-            {order.OrderItem.map((item: any) => (
-              <div key={item.product.slug} className="flex mb-5 border-b pb-4 mt-2">
-                {/* Usamos un fallback por si no hay imagen para que no rompa */}
-                <Image
-                  src={ item.product.ProductImage[0]?.url.startsWith('http') 
-                        ? item.product.ProductImage[0]?.url 
-                        : `/products/${item.product.ProductImage[0]?.url}` 
-                  }
-                  width={100}
-                  height={100}
-                  alt={item.product.title}
-                  className="mr-5 rounded object-cover"
-                />
-
-                <div className="flex-grow">
-                  <p className="font-bold">{item.product.title}</p>
-                  <p>${item.price} x {item.quantity}</p>
-                  <p className="font-bold text-blue-700">Subtotal: ${item.price * item.quantity}</p>
-                  
-                  {/* ✅ BOTÓN DE DESCARGA (Solo si pagó) */}
-                  {order.isPaid && item.product.downloadUrl && (
-                    <a 
-                      href={item.product.downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-3 bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 transition-all font-bold shadow-sm"
-                    >
-                      ⬇️ Descargar E-book
-                    </a>
+      <div className="mb-10">
+        <table className="min-w-full">
+          <thead className="bg-gray-200 border-b">
+            <tr>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">#ID</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Email</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Productos</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Total</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Estado</th>
+              <th className="text-sm font-medium text-gray-900 px-6 py-4 text-left">Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order:Order) => (
+              <tr
+                key={order.id}
+                className="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100"
+              >
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {order.id.split("-").at(-1)}
+                </td>
+                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  {order.buyerEmail ?? "Usuario registrado"}
+                </td>
+                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  {order.itemsInOrder} {order.itemsInOrder === 1 ? "ítem" : "ítems"}
+                </td>
+                <td className="text-sm font-bold text-gray-900 px-6 py-4 whitespace-nowrap">
+                  {currencyFormat(order.total)}
+                </td>
+                <td className="flex items-center text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  {order.isPaid ? (
+                    <>
+                      <IoCardOutline className="text-green-800" />
+                      <span className="mx-2 text-green-800">Pagada</span>
+                    </>
+                  ) : (
+                    <>
+                      <IoCardOutline className="text-red-800" />
+                      <span className="mx-2 text-red-800">No Pagada</span>
+                    </>
                   )}
-                </div>
-              </div>
+                </td>
+                <td className="text-sm text-gray-900 font-light px-6 py-4">
+                  <Link href={`/orders/${order.id}`} className="hover:underline">
+                    Ver orden
+                  </Link>
+                </td>
+              </tr>
             ))}
-          </div>
-
-          {/* Columna Derecha: Resumen y Pago */}
-          <div className="bg-white rounded-xl shadow-xl p-7 h-fit">
-            <h2 className="text-2xl mb-2 font-bold border-b pb-2">Resumen</h2>
-            
-            <div className="my-5">
-               <p className="text-sm text-gray-500 italic">Enviado a:</p>
-               <p className="font-bold text-lg">{order.buyerEmail}</p>
-            </div>
-
-            <div className="grid grid-cols-2 mt-4">
-              <span>No. Productos</span>
-              <span className="text-right">{order.itemsInOrder} {order.itemsInOrder === 1 ? 'ítem' : 'ítems'}</span>
-
-              <span className="mt-5 text-2xl font-bold">Total:</span>
-              <span className="mt-5 text-2xl font-bold text-right text-blue-600">
-                {currencyFormat(order.total)}
-              </span>
-            </div>
-
-            <div className="mt-8">
-              {order.isPaid ? (
-                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-sm">
-                   <p className="font-bold">¡Pago Completado!</p>
-                   <p className="text-sm">Tus libros digitales ya están listos para descargar.</p>
-                </div>
-              ) : (
-                /* ✅ BOTÓN DE MERCADO PAGO */
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs text-gray-500 text-center mb-2 italic">Selecciona tu método de pago:</p>
-                  <MercadoPagoButton 
-                    preferenceId={ order.transactionId ?? '' }
-                    
-                    amount={order.total} 
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </>
   );
 }
