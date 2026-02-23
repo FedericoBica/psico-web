@@ -1,25 +1,30 @@
-import type { CartProduct } from "@/interfaces";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware';
+
+// 1. Interfaz simplificada para productos digitales
+export interface CartProduct {
+  id: string;
+  slug: string;
+  title: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
 interface State {
   cart: CartProduct[];
 
+  // Métodos
   getTotalItems: () => number;
-  getSummaryInformation: (threshold?: number) => {
+  getSummaryInformation: () => {
     subTotal: number;
-    tax: number;
     total: number;
     itemsInCart: number;
-    shippingCost: number;
-    isFreeShipping: boolean;
-    amountToFreeShipping: number;
   };
 
-  addProductTocart: (product: CartProduct) => void;
+  addProductToCart: (product: CartProduct) => void;
   updateProductQuantity: (product: CartProduct, quantity: number) => void;
   removeProduct: (product: CartProduct) => void;
-
   clearCart: () => void;
 }
 
@@ -28,61 +33,48 @@ export const useCartStore = create<State>()(
     (set, get) => ({
       cart: [],
 
-      // Methods
+      // Retorna la cantidad total de archivos/items
       getTotalItems: () => {
         const { cart } = get();
         return cart.reduce((total, item) => total + item.quantity, 0);
       },
 
-      getSummaryInformation: (threshold = 2500) => {
+      // Resumen simplificado: Solo lo económico
+      getSummaryInformation: () => {
         const { cart } = get();
 
         const subTotal = cart.reduce(
           (subTotal, product) => product.quantity * product.price + subTotal,
           0
         );
-
-        // USAMOS EL THRESHOLD QUE VIENE POR PARÁMETRO
-        const isFreeShipping = subTotal >= threshold;
-        const shippingCost = 0;
-                
-        const tax = subTotal * 0.0
-        const total = subTotal + shippingCost;
+        
         const itemsInCart = cart.reduce(
-          (total, item) => total + item.quantity,
-          0
+          (total, item) => total + item.quantity, 0
         );
 
         return {
           subTotal,
-          tax,
-          total,
+          total: subTotal, // En digitales, total suele ser igual al subtotal (sin tax/envío)
           itemsInCart,
-          shippingCost,
-          isFreeShipping,
-          amountToFreeShipping: Math.max(0, threshold - subTotal)
         };
       },
 
-      addProductTocart: (product: CartProduct) => {
+      addProductToCart: (product: CartProduct) => {
         const { cart } = get();
 
-        // 1. Revisar si el producto existe en el carrito con la talla seleccionada
-        const productInCart = cart.some(
-          (item) => item.id === product.id && item.color === product.color
-        );
+        // 2. Revisar si el producto ya existe en el carrito
+        const productInCart = cart.some((item) => item.id === product.id);
 
         if (!productInCart) {
           set({ cart: [...cart, product] });
           return;
         }
 
-        // 2. Se que el producto existe por talla... tengo que incrementar
+        // 3. Si ya existe, solo aumentamos la cantidad
         const updatedCartProducts = cart.map((item) => {
-          if (item.id === product.id && item.color === product.color) {
+          if (item.id === product.id) {
             return { ...item, quantity: item.quantity + product.quantity };
           }
-
           return item;
         });
 
@@ -91,9 +83,8 @@ export const useCartStore = create<State>()(
 
       updateProductQuantity: (product: CartProduct, quantity: number) => {
         const { cart } = get();
-
         const updatedCartProducts = cart.map((item) => {
-          if (item.id === product.id && item.color === product.color) {
+          if (item.id === product.id) {
             return { ...item, quantity: quantity };
           }
           return item;
@@ -105,9 +96,8 @@ export const useCartStore = create<State>()(
       removeProduct: (product: CartProduct) => {
         const { cart } = get();
         const updatedCartProducts = cart.filter(
-          (item) => item.id !== product.id || item.color !== product.color
+          (item) => item.id !== product.id
         );
-
         set({ cart: updatedCartProducts });
       },
 
@@ -115,9 +105,8 @@ export const useCartStore = create<State>()(
         set({ cart: [] });
       },
     }),
-
     {
-      name: "shopping-cart",
+      name: 'shopping-cart',
     }
   )
 );

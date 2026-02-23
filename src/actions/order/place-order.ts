@@ -1,144 +1,86 @@
 "use server";
 
-import prisma from "@/lib/prisma";
 import { auth } from "@/auth.config";
-import type { Address } from "@/interfaces";
-import { getStoreConfig } from "../config/store-config";
+import prisma from "@/lib/prisma";
 
 interface ProductToOrder {
   productId: string;
   quantity: number;
-  color: string;
+  price: number;
 }
 
 export const placeOrder = async (
   productIds: ProductToOrder[],
-  address: Address,
-  couponCode?: string,
+  buyerEmail: string,
+  couponCode?: string
 ) => {
   const session = await auth();
   const userId = session?.user.id;
 
-  // 0. Obtener la configuración de envío de la DB en el Servidor
-  const shippingConfig = await getStoreConfig('shipping');
-
-  // 1. Obtener la información de los productos en la DB
-  const products = await prisma.product.findMany({
-    where: { id: { in: productIds.map((p) => p.productId) } },
-  });
-
-  // 2. Calcular montos de productos
-  const itemsInOrder = productIds.reduce((count, p) => count + p.quantity, 0);
-
-  const { subTotal } = productIds.reduce(
-    (totals, item) => {
-      const product = products.find((p) => p.id === item.productId);
-      if (!product) throw new Error(`${item.productId} no existe`);
-      totals.subTotal += product.price * item.quantity;
-      return totals;
-    },
-    { subTotal: 0 }
-  );
-
-  // --- LÓGICA DE CUPÓN ---
-  let discountAmount = 0;
-  if (couponCode) {
-    const dbCoupon = await prisma.coupon.findUnique({
-      where: { code: couponCode.toUpperCase().trim(), isActive: true }
-    });
-    if (dbCoupon) {
-      discountAmount = subTotal * (dbCoupon.discount / 100);
-    }
-  }
-
-  // --- LÓGICA DE ENVÍO RECALCULADA EN SERVIDOR ---
-  const baseShippingCost = shippingConfig.prices[address.deliveryMethod as keyof typeof shippingConfig.prices] || 0 || 0;
-  
-  const finalShippingCost = subTotal >= shippingConfig.freeShippingThreshold ? 0 : baseShippingCost;
-
-  // TOTAL FINAL SEGURO
-  const total = (subTotal - discountAmount) + finalShippingCost;  
-  // 3. Lógica de Envío
   try {
-    const prismaTx = await prisma.$transaction(async (tx) => {
-      
-      // 1. Actualizar el stock de los productos
-      const updatedProductsPromises = products.map((product) => {
-        const productQuantity = productIds
-          .filter((p) => p.productId === product.id)
-          .reduce((acc, item) => item.quantity + acc, 0);
+    // 1. Obtener los productos de la DB para validar precios actuales
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds.map((p) => p.productId) } },
+    });
 
-        return tx.product.update({
-          where: { id: product.id },
-          data: { inStock: { decrement: productQuantity } },
-        });
+    // 2. Cálculos de montos
+    const itemsInOrder = productIds.reduce((count, p) => count + p.quantity, 0);
+    
+    // Calculamos el subtotal basado en los precios de la DB (no del cliente)
+    const subTotal = productIds.reduce((prev, p) => {
+      const product = products.find((x) => x.id === p.productId);
+      return prev + (product?.price ?? 0) * p.quantity;
+    }, 0);
+
+    let total = subTotal;
+
+    // 3. Lógica de Cupón (si aplica)
+    if (couponCode) {
+      const coupon = await prisma.coupon.findUnique({
+        where: { code: couponCode, isActive: true },
       });
 
-      const updatedProducts = await Promise.all(updatedProductsPromises);
-      updatedProducts.forEach((p) => {
-        if (p.inStock < 0) throw new Error(`${p.title} no tiene stock suficiente`);
-      });
+      if (coupon) {
+        const discount = (subTotal * coupon.discountPercentage) / 100;
+        total = subTotal - discount;
+      }
+    }
 
-      // 2. Crear la orden (Shopify Style: userId puede ser null)
-      const order = await tx.order.create({
-        data: {
-          userId: userId ?? null, // <--- Si no hay sesión, es invitado
-          guestEmail: address.email,
-          itemsInOrder: itemsInOrder,
-          subTotal: subTotal,
-          tax: 0,
-          discount: discountAmount,
-          total: total,
-          deliveryMethod: address.deliveryMethod,
-          lockerLocation: address.lockerLocation,
-          shippingCost: finalShippingCost,
-
-          OrderItem: {
-            createMany: {
-              data: productIds.map((p) => ({
-                quantity: p.quantity,
-                color: p.color,
-                productId: p.productId,
-                price: products.find((product) => product.id === p.productId)?.price ?? 0,
-              })),
-            },
+    // 4. Crear la Orden en la DB
+    // Nota: No usamos transacción de stock porque son productos digitales ilimitados
+    const order = await prisma.order.create({
+      data: {
+        userId: userId,
+        buyerEmail: buyerEmail,
+        itemsInOrder: itemsInOrder,
+        subTotal: subTotal,
+        total: total,
+        isPaid: false,
+        
+        // Crear los items de la orden
+        OrderItem: {
+          createMany: {
+            data: productIds.map((p) => ({
+              productId: p.productId,
+              quantity: p.quantity,
+              price: products.find((x) => x.id === p.productId)?.price ?? 0,
+            })),
           },
         },
-      });
-
-      // 3. Crear la dirección de la orden
-      const orderAddress = await tx.orderAddress.create({
-        data: {
-          firstName:    address.firstName,
-          lastName:     address.lastName,
-          address:      address.address,
-          address2:     address.address2 || "",
-          postalCode:   address.postalCode || "N/A",
-          city:         address.city,
-          phone:        address.phone,
-          departamento: address.departamento,
-          orderId:      order.id,
-          dni:          address.dni,
-        },
-      });
-
-      return {
-        order: order,
-        orderAddress: orderAddress,
-      };
+      },
     });
 
     return {
       ok: true,
-      order: prismaTx.order,
-      message: 'Orden creada correctamente',
+      order: order,
+      message: "Orden creada exitosamente",
     };
 
-  } catch (error: any) {
-    console.error(error);
+  } catch (error) {
+    console.log(error);
     return {
       ok: false,
-      message: error?.message || 'No se pudo crear la orden',
+      message: "No se pudo realizar la orden",
     };
   }
 };

@@ -2,23 +2,20 @@ export interface Product {
   id: string;
   description: string;
   images: string[];
-  inStock: number;
   price: number;
   oldPrice?: number | null;
   slug: string;
   tags: string[];
   title: string;
-  category: ProductCategory;
-  color: Color[]
+  category: string;
   categoryId: string
   isPublished: boolean;
-  isBestSeller?: boolean;
 
   isPremiumUI?: boolean;
-  premiumData?: any;
-  sortOrder:number;
   rating: number;
   reviewCount:number;
+
+  downloadUrl:string;
 }
 
 export interface CartProduct {
@@ -28,8 +25,6 @@ export interface CartProduct {
   price: number;
   quantity: number;
   image: string;
-  color: Color;
-  category: string;
 }
 
 
@@ -39,5 +34,3 @@ export interface ProductImage {
   productId: string;
 }
 
-export type Color = 'Rosa' | 'Negro' | 'Violeta' | 'Rojo' | 'Azul' | 'Gris' | 'Blanco';
-export type ProductCategory = 'juguetes' | 'juegos' | 'lubricantes';

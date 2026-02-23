@@ -10,16 +10,15 @@ export const getOrderById = async (id: string) => {
     const order = await prisma.order.findUnique({
       where: { id },
       include: {
-        OrderAddress: true,
         OrderItem: {
           select: {
             price: true,
             quantity: true,
-            color: true,
             product: {
               select: {
                 title: true,
                 slug: true,
+                downloadUrl: true,
                 ProductImage: {
                   select: { url: true },
                   take: 1,
@@ -33,28 +32,20 @@ export const getOrderById = async (id: string) => {
 
     if (!order) return { ok: false, message: `${id} no existe` };
 
-    // LÓGICA DE SEGURIDAD
-    // Si la orden tiene un dueño (userId), verificamos sesión
+    // Si la orden tiene dueño, verificamos que sea el mismo usuario
     if (order.userId) {
       if (!session?.user) {
-        return { ok: false, message: "Debe estar autenticado para ver esta orden" };
+        return { ok: false, message: "Debe estar autenticado" };
       }
       if (session.user.role === "user" && session.user.id !== order.userId) {
         return { ok: false, message: "Esta orden no pertenece a su usuario" };
       }
     }
-    
-    // Si la orden es de invitado (userId es null), permitimos verla con el ID
-    return {
-      ok: true,
-      order: order,
-    };
+
+    return { ok: true, order };
 
   } catch (error) {
     console.log(error);
-    return {
-      ok: false,
-      message: "Hable con el administrador",
-    };
+    return { ok: false, message: "Error al obtener la orden" };
   }
 };
