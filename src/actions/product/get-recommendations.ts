@@ -2,32 +2,32 @@
 
 import prisma from "@/lib/prisma";
 
-export const getProductsForRecommendations = async (excludedIds: string[], categories: string[]) => {
+export const getProductsForRecommendations = async (
+  excludedIds: string[],
+  categories: string[]
+) => {
   try {
     const products = await prisma.product.findMany({
       where: {
         id: { notIn: excludedIds },
-        inStock: { gt: 0 },
         isPublished: true,
-        // Buscamos productos que pertenezcan a las categorías sugeridas
         category: {
-          name: {
-            in: categories,
-            mode: 'insensitive' // Para que no importe si es "Vibradores" o "vibradores"
-          }
-        }
+          name: { in: categories, mode: "insensitive" },
+        },
       },
       take: 8,
-      include: { ProductImage: { take: 2 } }
+      include: { ProductImage: { take: 2 } },
     });
 
-    // Mezclamos y devolvemos 4
+    type DbProduct = typeof products[number];
+    type DbImage = DbProduct["ProductImage"][number];
+
     return products
       .sort(() => 0.5 - Math.random())
       .slice(0, 4)
-      .map(p => ({
+      .map((p: DbProduct) => ({
         ...p,
-        images: p.ProductImage.map(i => i.url)
+        images: p.ProductImage.map((i: DbImage) => i.url),
       }));
   } catch (error) {
     return [];

@@ -1,34 +1,38 @@
+'use server';
+
 import prisma from "@/lib/prisma";
 
 export const getPaginatedProductsAdmin = async ({
   page = 1,
   take = 12,
+}: {
+  page?: number;
+  take?: number;
 }) => {
   if (isNaN(Number(page))) page = 1;
   if (page < 1) page = 1;
 
   try {
     const products = await prisma.product.findMany({
-      take: take,
+      take,
       skip: (page - 1) * take,
       include: {
-        ProductImage: {
-          take: 1,
-          select: { url: true },
-        },
+        ProductImage: { take: 1, select: { url: true } },
         category: true,
       },
-      // AQUÍ NO PONEMOS WHERE isPublished: true, queremos ver TODOS
     });
 
-    const totalCount = await prisma.product.count(); // Cuenta total real de la DB
+    type DbProduct = typeof products[number];
+    type DbImage = DbProduct["ProductImage"][number];
+
+    const totalCount = await prisma.product.count();
 
     return {
       currentPage: page,
       totalPages: Math.ceil(totalCount / take),
-      products: products.map((product) => ({
+      products: products.map((product: DbProduct) => ({
         ...product,
-        images: product.ProductImage.map((image) => image.url),
+        images: product.ProductImage.map((image: DbImage) => image.url),
       })),
     };
   } catch (error) {

@@ -19,7 +19,6 @@ export const getPaginatedOrders = async () => {
       id: true,
       subTotal: true,
       total: true,
-      discount: true,
       itemsInOrder: true,
       isPaid: true,
       paidAt: true,

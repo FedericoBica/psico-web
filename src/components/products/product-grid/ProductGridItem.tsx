@@ -9,9 +9,18 @@ interface Props {
   product: Product;
 }
 
+
+const getImageSrc = (src: string): string => {
+  if (!src) return '/imgs/placeholder.jpg';
+  if (src.startsWith('http')) return src; // URL de Cloudinary u otra URL externa
+  return `/products/${src}`; // Imagen local en public/products/
+};
+
 export const ProductGridItem = ({ product }: Props) => {
   // Simplificado: solo una imagen, sin hover de segunda imagen
   const [displayImage, setDisplayImage] = useState(product.images[0]);
+
+  const imageSrc = getImageSrc(displayImage);
 
   return (
     <div className="rounded-md overflow-hidden fade-in flex flex-col h-full border border-gray-100 shadow-sm hover:shadow-md transition-all">
@@ -24,7 +33,7 @@ export const ProductGridItem = ({ product }: Props) => {
         )}
         
         <Image
-          src={`/products/${displayImage}`}
+          src={imageSrc}
           alt={product.title}
           className="w-full object-cover rounded"
           width={500}

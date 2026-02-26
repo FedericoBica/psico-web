@@ -14,7 +14,6 @@ interface Props {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-// Tipo inferido del include de Prisma
 type OrderItem = {
   price: number;
   quantity: number;
@@ -42,6 +41,10 @@ export default async function OrderPage({ params, searchParams }: Props) {
       preferenceId = response.preferenceId;
     }
   }
+
+  // Calculamos el descuento como diferencia entre subTotal y total (si existe)
+  const discountAmount = order.subTotal - order.total;
+  const hasDiscount = discountAmount > 0;
 
   const isPaymentRedirect = !!searchParams.status;
 
@@ -72,7 +75,7 @@ export default async function OrderPage({ params, searchParams }: Props) {
                 return (
                   <div key={item.product.slug} className="flex gap-4 border-b pb-4">
                     <Image
-                      src={src}
+                      src={src || '/imgs/placeholder.jpg'}
                       width={100}
                       height={100}
                       alt={item.product.title}
@@ -123,11 +126,11 @@ export default async function OrderPage({ params, searchParams }: Props) {
               <span>Subtotal</span>
               <span className="text-right">{currencyFormat(order.subTotal)}</span>
 
-              {order.discount > 0 && (
+              {hasDiscount && (
                 <>
                   <span className="text-green-600 font-bold italic">Descuento</span>
                   <span className="text-right text-green-600 font-bold italic">
-                    -{currencyFormat(order.discount)}
+                    -{currencyFormat(discountAmount)}
                   </span>
                 </>
               )}
@@ -144,9 +147,7 @@ export default async function OrderPage({ params, searchParams }: Props) {
               {order.isPaid ? (
                 <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
                   <p className="font-bold">¡Pago Completado!</p>
-                  <p className="text-sm mt-1">
-                    Tus e-books están listos para descargar.
-                  </p>
+                  <p className="text-sm mt-1">Tus e-books están listos para descargar.</p>
                 </div>
               ) : (
                 preferenceId && (

@@ -12,34 +12,18 @@ export const CartRecommendations = () => {
 
   useEffect(() => {
     const fetchRecs = async () => {
-      // Si no hay nada en el carrito, no mostramos recomendaciones (opcional)
       if (cart.length === 0) {
         setLoading(false);
         return;
       }
 
       setLoading(true);
-      
+
       const excludedIds = cart.map((p) => p.id);
-      
-      // 1. Mapeo con tus categorías reales: juguetes, lubricantes, juegos
-      const hasJuguete = cart.some(p => p.category?.toLowerCase().includes('juguetes'));
-      const hasLubricante = cart.some(p => p.category?.toLowerCase().includes('lubricantes'));
-      const hasJuego = cart.some(p => p.category?.toLowerCase().includes('juegos'));
 
-      // 2. Lógica de Cross-selling (Venta cruzada)
-      let targetCategories: string[] = [];
-      
-      if (hasJuguete) targetCategories.push('lubricantes', 'juegos');
-      if (hasLubricante) targetCategories.push('juguetes', 'juegos');
-      if (hasJuego) targetCategories.push('juguetes', 'lubricantes');
-      
-      // Si tiene de todo o no detecta categoría, mandamos el mix completo
-      if (targetCategories.length === 0) {
-        targetCategories = ['juguetes', 'lubricantes', 'juegos'];
-      }
+      // CartProduct no tiene 'category', así que mostramos mix general de todas las categorías
+      const targetCategories = ['juguetes', 'lubricantes', 'juegos', 'bdsm', 'lectura', 'escritura'];
 
-      // 3. Llamar al Action
       const products = await getProductsForRecommendations(excludedIds, targetCategories);
       setRecommended(products);
       setLoading(false);

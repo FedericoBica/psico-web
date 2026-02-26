@@ -1,3 +1,5 @@
+'use server'
+
 import prisma from "@/lib/prisma";
 
 // Para la página individual (Slug)

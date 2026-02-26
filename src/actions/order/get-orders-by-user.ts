@@ -23,6 +23,7 @@ export const getOrdersByUser = async () => {
       isPaid: true,
       createdAt: true,
       itemsInOrder: true,
+      buyerEmail: true,
     },
   });
 

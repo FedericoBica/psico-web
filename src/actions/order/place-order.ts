@@ -19,16 +19,18 @@ export const placeOrder = async (
 
   try {
     const products = await prisma.product.findMany({
-      where: { id: { in: productIds.map((p: ProductToOrder) => p.productId) } },
+      where: { id: { in: productIds.map((p) => p.productId) } },
     });
 
+    type DbProduct = typeof products[number];
+
     const itemsInOrder = productIds.reduce(
-      (count: number, p: ProductToOrder) => count + p.quantity, 
+      (count, p) => count + p.quantity,
       0
     );
 
-    const subTotal = productIds.reduce((prev: number, p: ProductToOrder) => {
-      const product = products.find((x: typeof products[number]) => x.id === p.productId);
+    const subTotal = productIds.reduce((prev, p) => {
+      const product = products.find((x: DbProduct) => x.id === p.productId);
       return prev + (product?.price ?? 0) * p.quantity;
     }, 0);
 
@@ -48,20 +50,19 @@ export const placeOrder = async (
 
     const order = await prisma.order.create({
       data: {
-        userId:       userId,
-        buyerEmail:   buyerEmail,
-        itemsInOrder: itemsInOrder,
-        subTotal:     subTotal,
-        discount:     discountAmount,
-        total:        total,
-        isPaid:       false,
+        userId,
+        buyerEmail,
+        itemsInOrder,
+        subTotal,
+        total,
+        isPaid: false,
 
         OrderItem: {
           createMany: {
-            data: productIds.map((p: ProductToOrder) => ({
+            data: productIds.map((p) => ({
               productId: p.productId,
-              quantity:  p.quantity,
-              price:     products.find((x: typeof products[number]) => x.id === p.productId)?.price ?? 0,
+              quantity: p.quantity,
+              price: products.find((x: DbProduct) => x.id === p.productId)?.price ?? 0,
             })),
           },
         },
@@ -71,9 +72,9 @@ export const placeOrder = async (
     return {
       ok: true,
       order,
+      discountAmount,
       message: "Orden creada exitosamente",
     };
-
   } catch (error) {
     console.log(error);
     return {
