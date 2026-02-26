@@ -14,16 +14,17 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
-        // Un negro casi púrpura para el fondo
-        'sexshop-dark': '#0f0a12', 
-        // Un rosa neón para botones y acentos
-        'sexshop-pink': '#ff007a',
-        // Un violeta eléctrico
-        'sexshop-violet': '#8a2be2',
-    }
-    },
-    animation: {
-        'marquee': 'marquee 25s linear infinite',
+        // Un verde pálido, relajante y profesional
+        'sage': {
+          50: '#f4f7f4',
+          100: '#e7ede7',
+          200: '#d1dbd1',
+          500: '#8ca38c', // Color principal para acentos
+          600: '#768a76', // Para hover
+        },
+      },
+      animation: {
+          'marquee': 'marquee 25s linear infinite',
       },
       keyframes: {
         marquee: {
@@ -33,5 +34,6 @@ const config: Config = {
       },
   },
   plugins: [],
+  }
 }
-export default config
+export default config;

@@ -4,6 +4,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  transpilePackages: ['swiper'],
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -11,7 +12,11 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'res.cloudinary.com',
+                hostname: 'images.unsplash.com',
+            },
+            {
+              protocol: 'https',
+              hostname: 'res.cloudinary.com', // Para cuando subas tus propias fotos
             },
         ],
     },

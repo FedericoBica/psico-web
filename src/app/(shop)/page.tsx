@@ -24,9 +24,9 @@ export default async function Home({ searchParams }: Props) {
 
   const { home } = await getAllStoreConfig();
 
-  if ( products.length === 0 ) {
-    redirect('/');
-  }
+  // if ( products.length === 0 ) {
+  //   redirect('/');
+  // }
 
 
   return (
