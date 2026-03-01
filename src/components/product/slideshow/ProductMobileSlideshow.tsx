@@ -6,7 +6,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode, Navigation, Pagination } from 'swiper/modules';
 
 
-import 'swiper/swiper-bundle.css';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/pagination';
 
 import './slideshow.css';
 

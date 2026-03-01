@@ -35,7 +35,7 @@ export const ScrollToTop = () => {
         type="button"
         onClick={scrollToTop}
         className={clsx(
-          "p-3 rounded-full bg-pink-600 text-white shadow-lg transition-all duration-300 hover:bg-pink-700 hover:scale-110",
+          "p-3 rounded-full bg-[#9ead6b] text-white shadow-lg transition-all duration-300 hover:bg-pink-700 hover:scale-110",
           {
             'opacity-100 translate-y-0': isVisible,
             'opacity-0 translate-y-10 pointer-events-none': !isVisible,

@@ -4,58 +4,72 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/interfaces';
 import { useState } from 'react';
+import { currencyFormat } from '@/utils';
 
-interface Props {
-  product: Product;
-}
-
+interface Props { product: Product; }
 
 const getImageSrc = (src: string): string => {
   if (!src) return '/imgs/placeholder.jpg';
-  if (src.startsWith('http')) return src; // URL de Cloudinary u otra URL externa
-  return `/products/${src}`; // Imagen local en public/products/
+  if (src.startsWith('http')) return src;
+  return `/products/${src}`;
 };
 
 export const ProductGridItem = ({ product }: Props) => {
-  // Simplificado: solo una imagen, sin hover de segunda imagen
-  const [displayImage, setDisplayImage] = useState(product.images[0]);
-
+  const [displayImage] = useState(product.images[0]);
   const imageSrc = getImageSrc(displayImage);
+  const hasDiscount   = (product.oldPrice ?? 0) > product.price;
+  const discountPct   = hasDiscount
+    ? Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100)
+    : 0;
 
   return (
-    <div className="rounded-md overflow-hidden fade-in flex flex-col h-full border border-gray-100 shadow-sm hover:shadow-md transition-all">
-      <Link href={`/product/${product.slug}`} className="relative block">
-        {/* Badge de Oferta (Digital) */}
-        {(product.oldPrice ?? 0) > product.price && (
-          <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-sm z-10">
-            OFERTA
+    <div className="group rounded-2xl overflow-hidden bg-white border border-[#e3e3e3] hover:border-[#c9d894] hover:shadow-lg transition-all duration-300 flex flex-col">
+
+      {/* Imagen */}
+      <Link href={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-[#e3e3e3]">
+        {hasDiscount && (
+          <span className="absolute top-3 left-3 z-10 bg-[#9ead6b] text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            -{discountPct}%
           </span>
         )}
-        
         <Image
           src={imageSrc}
           alt={product.title}
-          className="w-full object-cover rounded"
-          width={500}
-          height={500}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </Link>
 
-      <div className="p-4 flex flex-col flex-grow">
+      {/* Info */}
+      <div className="p-5 flex flex-col flex-grow">
         <Link
-          className="hover:text-blue-600 transition-all font-semibold text-lg line-clamp-2"
           href={`/product/${product.slug}`}
+          className="font-serif text-lg text-[#2d2d2d] leading-snug line-clamp-2 hover:text-[#9ead6b] transition-colors mb-2"
         >
           {product.title}
         </Link>
-        
-        <div className="mt-auto pt-2 flex items-center gap-2">
-          <span className="text-xl font-bold">${product.price}</span>
-          {(product.oldPrice ?? 0) > product.price && (
-            <span className="text-sm line-through text-gray-400">
-              ${product.oldPrice}
+
+        <p className="text-[#777777] text-xs font-light line-clamp-2 mb-4 leading-relaxed">
+          {product.description}
+        </p>
+
+        <div className="mt-auto flex items-center justify-between gap-2">
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-bold text-[#2d2d2d]">
+              {currencyFormat(product.price)}
             </span>
-          )}
+            {hasDiscount && (
+              <span className="text-sm text-[#aaaaaa] line-through">
+                {currencyFormat(product.oldPrice!)}
+              </span>
+            )}
+          </div>
+          <Link
+            href={`/product/${product.slug}`}
+            className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9ead6b] hover:text-[#7a9347] transition-colors border-b border-[#c9d894] pb-0.5"
+          >
+            Ver más →
+          </Link>
         </div>
       </div>
     </div>

@@ -24,4 +24,6 @@ export * from './ui/pagination/Pagination';
 export * from './ui/sidebar/Sidebar';
 export * from './ui/title/Title';
 export * from './ui/top-menu/TopMenu';
-export * from './ui/top-bar/TopBar';
+export * from './ui/about/AboutMe';
+export * from './ui/contacto/Contacto';
+export * from './ui/servicios/Servicio';

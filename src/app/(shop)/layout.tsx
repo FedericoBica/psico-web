@@ -1,14 +1,14 @@
 import { getStoreConfig } from '@/actions';
-import { Footer, Sidebar, TopBar, TopMenu } from '@/components';
+import { Footer, Sidebar, TopMenu } from '@/components';
 import { ScrollToTop } from '@/components/product/ui/ScrollToTop';
+import { Contacto } from '@/components/ui/contacto/Contacto';
 
 export default async function ShopLayout({ children }: {
   children: React.ReactNode;
 }) {
-  const topbarConfig = await getStoreConfig('topbar');
 
   return (
-    <main className="min-h-screen flex flex-col bg-white text-gray-800">
+    <main className="min-h-screen flex flex-col bg-white text-[#2d2d2d]">
       {/* <TopBar dbMessages={topbarConfig} /> */}
       <TopMenu />
       <Sidebar />
@@ -18,6 +18,7 @@ export default async function ShopLayout({ children }: {
       </div>
 
       <ScrollToTop />
+      
       <Footer />
     </main>
   );

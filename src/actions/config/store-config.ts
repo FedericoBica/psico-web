@@ -41,12 +41,12 @@ const CONFIG_DEFAULTS: AllConfig = {
   },
   home: {
     heroTitle:       'Potencia tus sesiones,',
-    heroTitleAccent: 'con un click.',
+    heroTitleAccent: '',
     heroSubtitle:    'Recursos psicopedagogicos para la practica profesional',
-    heroTagline:     'Biblioteca Digital',
+    heroTagline:     '',
   },
   store: {
-    storeName:       'Psico Web',
+    storeName:       'Lic. Gimena Medrano',
     metaDescription: 'Plataforma de recursos digitales y herramientas clínicas de psicopedagogia',
   },
 };

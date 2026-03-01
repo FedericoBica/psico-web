@@ -1,28 +1,57 @@
-import { titleFont } from '@/config/fonts';
 import Link from 'next/link';
-import { IoLogoInstagram } from 'react-icons/io5';
+import { IoLogoInstagram, IoLogoWhatsapp, IoMailOutline } from 'react-icons/io5';
 
 export const Footer = () => {
   return (
-    <footer className="flex w-full flex-col items-center justify-center border-t border-gray-200 bg-gray-50 py-10 px-5 mt-20">
-      <div className="flex w-full max-w-[1200px] flex-col items-center justify-between gap-8 md:flex-row">
-        
-        <div className="flex flex-col items-center md:items-start">
-          <Link href="/">
-            <span className="text-2xl font-bold text-gray-800">
-              Psico<span className="text-sage-500">Web</span>
-            </span>
-          </Link>
-          <p className="mt-2 text-[10px] text-gray-400 uppercase tracking-[0.2em]">
-            Recursos profesionales de psicología
+    <footer className="bg-[#2d2d2d] text-white pt-14 pb-8 px-8 md:px-16 lg:px-24">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-10 mb-10">
+
+        {/* Marca */}
+        <div>
+          <p className="font-serif text-xl leading-none mb-1">Lic. Gimena Medrano</p>
+          <p className="text-[10px] text-[#9ead6b] uppercase tracking-[0.25em] font-bold mb-4">Psicopedagoga</p>
+          <p className="text-white/50 text-sm font-light leading-relaxed">
+            Acompañando procesos de aprendizaje con confianza, estrategia y dedicación.
           </p>
         </div>
 
-        <div className="flex gap-6 text-sm font-medium text-gray-500">
-           <Link href="/nosotros" className="hover:text-sage-600 transition-colors">Nosotros</Link>
-           <Link href="/contacto" className="hover:text-sage-600 transition-colors">Contacto</Link>
-           <Link href="/terminos" className="hover:text-sage-600 transition-colors">Términos</Link>
+        {/* Links */}
+        <div>
+          <p className="text-[9px] uppercase tracking-[0.25em] text-[#9ead6b] font-bold mb-4">Navegación</p>
+          <div className="flex flex-col gap-2">
+            {['Inicio','Sobre Mí','Servicios','Tienda','Blog','Contacto'].map(item => (
+              <Link key={item} href="/"
+                className="text-sm text-white/50 hover:text-white transition-colors font-light">
+                {item}
+              </Link>
+            ))}
+          </div>
         </div>
+
+        {/* Contacto */}
+        <div>
+          <p className="text-[9px] uppercase tracking-[0.25em] text-[#9ead6b] font-bold mb-4">Contacto</p>
+          <div className="flex flex-col gap-3">
+            <Link href="https://wa.me/59897454505" target="_blank"
+              className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
+              <IoLogoWhatsapp size={16} className="text-[#9ead6b]" /> 097 454 505
+            </Link>
+            <Link href="mailto:gimenamedrano03@gmail.com"
+              className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
+              <IoMailOutline size={16} className="text-[#9ead6b]" /> gimenamedrano03@gmail.com
+            </Link>
+            <Link href="https://instagram.com/Lic.GimenaMedrano" target="_blank"
+              className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
+              <IoLogoInstagram size={16} className="text-[#9ead6b]" /> @Lic.GimenaMedrano
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto pt-6 border-t border-white/10 text-center">
+        <p className="text-white/30 text-[11px] font-light">
+          © {new Date().getFullYear()} Lic. Gimena Medrano. Todos los derechos reservados.
+        </p>
       </div>
     </footer>
   );
