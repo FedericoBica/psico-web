@@ -12,9 +12,13 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  color: #374151; /* Gris oscuro suave para lectura */
+  background-color: #ffffff; /* Blanco puro */
   min-height: 100vh;
+}
+
+.shadow-premium {
+  box-shadow: 0 10px 30px -10px rgba(140, 163, 140, 0.1);
 }
 
 /* Animación de entrada suave */

@@ -18,14 +18,11 @@ export const TopBar = ({ dbMessages }: Props) => {
 
   const scrollingContent = [...messages, ...messages, ...messages];
 
-  return (
-    <div className="bg-pink-600 text-white py-1.5 overflow-hidden border-b border-pink-500 shadow-sm relative z-[60]">
+return (
+    <div className="bg-sage-600 text-white py-1.5 overflow-hidden border-b border-sage-700 relative z-[60]">
       <div className="flex animate-marquee whitespace-nowrap">
-        {scrollingContent.map((msg, i) => (
-          <span
-            key={i}
-            className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] px-10 flex items-center"
-          >
+        {[...messages, ...messages].map((msg, i) => (
+          <span key={i} className="text-[10px] md:text-xs font-medium uppercase tracking-[0.1em] px-10 flex items-center">
             {msg}
           </span>
         ))}

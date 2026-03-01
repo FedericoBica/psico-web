@@ -28,15 +28,15 @@ export const OrderSummary = () => {
   return (
     <div className="grid grid-cols-2 gap-y-3">
       <span className="text-gray-400">No. Productos</span>
-      <span className="text-right text-gray-200">{itemsInCart} unidades</span>
+      <span className="text-right text-gray-700">{itemsInCart} unidades</span>
 
-      <span className="text-gray-400">Subtotal</span>
-      <span className="text-right text-gray-200">{currencyFormat(subTotal)}</span>
+      <span className="text-gray-400">Total</span>
+      <span className="text-right text-gray-700">{currencyFormat(subTotal)}</span>
 
       <div className="col-span-2 h-px bg-zinc-800 my-2" />
 
       <span className="text-xl font-bold text-gray-100">Total:</span>
-      <span className="text-xl text-right font-bold text-pink-500">
+      <span className="text-xl text-right font-bold text-gray-800">
         {currencyFormat(total)}
       </span>
     </div>

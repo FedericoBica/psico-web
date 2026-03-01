@@ -8,12 +8,12 @@ export default async function ShopLayout({ children }: {
   const topbarConfig = await getStoreConfig('topbar');
 
   return (
-    <main className="min-h-screen flex flex-col bg-zinc-950 text-gray-100">
+    <main className="min-h-screen flex flex-col bg-white text-gray-800">
       {/* <TopBar dbMessages={topbarConfig} /> */}
       <TopMenu />
       <Sidebar />
 
-      <div className="flex-grow px-0 sm:px-1">
+      <div className="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {children}
       </div>
 

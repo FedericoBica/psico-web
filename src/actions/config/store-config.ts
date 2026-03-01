@@ -40,14 +40,14 @@ const CONFIG_DEFAULTS: AllConfig = {
     isActive: true,
   },
   home: {
-    heroTitle:       'Tu conocimiento,',
-    heroTitleAccent: 'a un click.',
-    heroSubtitle:    'Descubrí nuestra colección de e-books y empezá a aprender hoy.',
+    heroTitle:       'Potencia tus sesiones,',
+    heroTitleAccent: 'con un click.',
+    heroSubtitle:    'Recursos psicopedagogicos para la practica profesional',
     heroTagline:     'Biblioteca Digital',
   },
   store: {
     storeName:       'Psico Web',
-    metaDescription: 'Tienda de e-books online.',
+    metaDescription: 'Plataforma de recursos digitales y herramientas clínicas de psicopedagogia',
   },
 };
 

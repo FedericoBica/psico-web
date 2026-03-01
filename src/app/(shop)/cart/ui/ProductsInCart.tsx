@@ -33,19 +33,19 @@ export const ProductsInCart = () => {
           />
           <div>
             <Link
-              className="hover:underline cursor-pointer font-medium"
+              className="hover:underline cursor-pointer font-medium text-gray-800"
               href={`/product/${product.slug}`}
             >
               {product.title}
             </Link>
-            <p className="text-gray-400">{currencyFormat(product.price)}</p>
-            <QuantitySelector
+            <p className="text-gray-700">{currencyFormat(product.price)}</p>
+            {/* <QuantitySelector
               quantity={product.quantity}
               onQuantityChanged={(quantity) => updateProductQuantity(product, quantity)}
-            />
+            /> */}
             <button
               onClick={() => removeProduct(product)}
-              className="underline mt-3 text-sm text-red-400 hover:text-red-300"
+              className="underline mt-3 text-sm text-gray-400 hover:text-gray-300"
             >
               Remover
             </button>
