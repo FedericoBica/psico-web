@@ -1,6 +1,16 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { IoLogoWhatsapp } from 'react-icons/io5';
 
 export const Servicios = () => {
+
+  const whatsappNumber = "59897464500"; // Basado en 097 464 500 
+  
+  const getWhatsappLink = (servicio: string) => {
+    const message = encodeURIComponent(`Hola Gimena, me gustaría realizar una consulta sobre: ${servicio}.`);
+    return `https://wa.me/${whatsappNumber}?text=${message}`;
+  };
+
   return (
     <section className="py-20 px-8 md:px-16 lg:px-24 bg-[#f7f7f5]" id="servicios">
       <div className="max-w-5xl mx-auto">
@@ -33,6 +43,15 @@ export const Servicios = () => {
                   <span className="font-bold">Objetivo:</span> Entender qué está pasando y cómo acompañar de la mejor manera.
                 </p>
               </div>
+              <Link 
+                  href={getWhatsappLink("Intervención Psicopedagógica")}
+                  target="_blank"
+                  className="inline-flex items-center justify-center gap-2 mt-7 px-6 py-3 bg-[#9ead6b] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#4a3c31] transition-all shadow-md active:scale-95"
+                >
+                  <IoLogoWhatsapp size={16} />
+                  Consultar 
+                </Link>
+
             </div>
           </div>
 
@@ -57,6 +76,14 @@ export const Servicios = () => {
                   <span className="font-bold">Objetivo:</span> Transformar las dificultades en avances reales y sostenidos.
                 </p>
               </div>
+              <Link 
+                  href={getWhatsappLink("Intervención Psicopedagógica")}
+                  target="_blank"
+                  className="inline-flex items-center justify-center gap-2 mt-7 px-6 py-3 bg-[#9ead6b] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#4a3c31] transition-all shadow-md active:scale-95"
+                >
+                  <IoLogoWhatsapp size={16} />
+                  Consultar 
+                </Link>
             </div>
           </div>
         </div>

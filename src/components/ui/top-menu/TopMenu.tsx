@@ -28,7 +28,7 @@ export const TopMenu = () => {
     { label: 'Inicio',    href: '/' },
     { label: 'Sobre Mí', href: '/#sobre-mi' },
     { label: 'Servicios', href: '/#servicios' },
-    { label: 'Tienda',    href: '/#tienda' },
+    { label: 'Tienda',    href: '/tienda' },
     { label: 'Blog',      href: '/blog' },
     { label: 'Contacto',  href: '/#contacto' },
   ];
@@ -90,7 +90,7 @@ export const TopMenu = () => {
           )}
 
           {/* Búsqueda desktop */}
-          {/* <form onSubmit={handleSearch} className="hidden sm:flex items-center relative">
+          <form onSubmit={handleSearch} className="hidden sm:flex items-center relative">
             <IoSearchOutline size={15} className="absolute left-3 text-[#aaaaaa]" />
             <input
               type="text"
@@ -99,7 +99,7 @@ export const TopMenu = () => {
               placeholder="Buscar recursos..."
               className="bg-[#e3e3e3] rounded-full py-2 pl-8 pr-4 text-sm text-[#2d2d2d] placeholder:text-[#aaaaaa] focus:outline-none focus:ring-1 focus:ring-[#9ead6b] w-44 transition-all focus:w-52"
             />
-          </form> */}
+          </form>
 
           {/* Carrito */}
           <Link
@@ -120,9 +120,9 @@ export const TopMenu = () => {
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#9ead6b] hover:bg-[#7a9347] text-white transition-all active:scale-95"
           >
             <IoMenuOutline size={18} />
-            {/* <span className="text-[11px] font-bold uppercase tracking-[0.15em] hidden sm:block">
+            <span className="text-[11px] font-bold uppercase tracking-[0.15em] hidden sm:block">
               Menú
-            </span> */}
+            </span>
           </button>
         </div>
       </div>

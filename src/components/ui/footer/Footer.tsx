@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { IoLogoInstagram, IoLogoWhatsapp, IoMailOutline } from 'react-icons/io5';
+import { IoLocationOutline, IoLogoInstagram, IoLogoWhatsapp, IoMailOutline } from 'react-icons/io5';
 
 export const Footer = () => {
   return (
@@ -43,6 +43,10 @@ export const Footer = () => {
             <Link href="https://instagram.com/Lic.GimenaMedrano" target="_blank"
               className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
               <IoLogoInstagram size={16} className="text-[#9ead6b]" /> @Lic.GimenaMedrano
+            </Link>
+            <Link href="/" target="_blank"
+              className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
+              <IoLocationOutline size={16} className="text-[#9ead6b]" /> Carrasco, Montevideo
             </Link>
           </div>
         </div>

@@ -4,6 +4,8 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Product, Category } from '@/interfaces';
 import { createUpdateProduct } from '@/actions';
 import { useRouter } from 'next/navigation';
+import { IoCloudUploadOutline, IoTrashOutline } from 'react-icons/io5';
+import Image from 'next/image';
 
 interface Props {
   product: Partial<Product> & { ProductImage?: any[] };
@@ -15,10 +17,11 @@ interface FormInputs {
   slug: string;
   description: string;
   price: number;
-  oldPrice?: number;  // ✅ sin null
+  oldPrice?: number;
   tags: string;
   categoryId: string;
   downloadUrl: string;
+  images?: FileList; // ✅ Añadido para las imágenes
 }
 
 export const ProductForm = ({ product, categories }: Props) => {
@@ -30,13 +33,13 @@ export const ProductForm = ({ product, categories }: Props) => {
     formState: { isValid },
   } = useForm<FormInputs>({
     defaultValues: {
-      title:       product.title ?? '',
-      slug:        product.slug ?? '',
+      title: product.title ?? '',
+      slug: product.slug ?? '',
       description: product.description ?? '',
-      price:       product.price ?? 0,
-      oldPrice:    product.oldPrice ?? undefined,  // ✅ null → undefined
-      tags:        product.tags?.join(', ') ?? '',
-      categoryId:  product.categoryId ?? '',
+      price: product.price ?? 0,
+      oldPrice: product.oldPrice ?? undefined,
+      tags: product.tags?.join(', ') ?? '',
+      categoryId: product.categoryId ?? '',
       downloadUrl: (product as any).downloadUrl ?? '',
     },
   });
@@ -45,55 +48,65 @@ export const ProductForm = ({ product, categories }: Props) => {
     const formData = new FormData();
 
     if (product.id) formData.append('id', product.id);
-    formData.append('title',       data.title);
-    formData.append('slug',        data.slug);
+    formData.append('title', data.title);
+    formData.append('slug', data.slug);
     formData.append('description', data.description);
-    formData.append('price',       data.price.toString());
-    formData.append('oldPrice',    (data.oldPrice ?? 0).toString());
-    formData.append('tags',        data.tags);
-    formData.append('categoryId',  data.categoryId);
+    formData.append('price', data.price.toString());
+    formData.append('oldPrice', (data.oldPrice ?? 0).toString());
+    formData.append('tags', data.tags);
+    formData.append('categoryId', data.categoryId);
     formData.append('downloadUrl', data.downloadUrl);
+
+    // ✅ Lógica para cargar múltiples imágenes
+    if (data.images) {
+      for (let i = 0; i < data.images.length; i++) {
+        formData.append('images', data.images[i]);
+      }
+    }
 
     const { ok, product: updatedProduct } = await createUpdateProduct(formData);
 
     if (ok) {
-      router.replace(`/admin/product/${updatedProduct?.slug}`);
+      router.replace(`/admin/products/${updatedProduct?.slug}`);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid px-5 mb-16 grid-cols-1 sm:px-0 sm:grid-cols-2 gap-3">
-      <div className="w-full">
-        <div className="flex flex-col mb-2">
-          <span>Título del E-book</span>
-          <input type="text" className="p-2 border rounded-md bg-gray-200" {...register('title', { required: true })} />
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Columna Izquierda: Información */}
+      <div className="space-y-4">
+        <div className="flex flex-col">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-1">Título del E-book</span>
+          <input type="text" className="p-3 border border-gray-200 rounded-xl bg-[#f7f7f5] focus:outline-none focus:ring-1 focus:ring-[#9ead6b]" {...register('title', { required: true })} />
         </div>
 
-        <div className="flex flex-col mb-2">
-          <span>Slug (URL única)</span>
-          <input type="text" className="p-2 border rounded-md bg-gray-200" {...register('slug', { required: true })} />
+        <div className="flex flex-col">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-1">Slug (URL única)</span>
+          <input type="text" className="p-3 border border-gray-200 rounded-xl bg-[#f7f7f5] focus:outline-none focus:ring-1 focus:ring-[#9ead6b]" {...register('slug', { required: true })} />
         </div>
 
-        <div className="flex flex-col mb-2">
-          <span>Descripción</span>
-          <textarea rows={5} className="p-2 border rounded-md bg-gray-200" {...register('description', { required: true })} />
+        <div className="flex flex-col">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-1">Descripción</span>
+          <textarea rows={5} className="p-3 border border-gray-200 rounded-xl bg-[#f7f7f5] focus:outline-none focus:ring-1 focus:ring-[#9ead6b]" {...register('description', { required: true })} />
         </div>
 
-        <div className="flex flex-col mb-2">
-          <span>Precio Actual ($)</span>
-          <input type="number" step="0.01" className="p-2 border rounded-md bg-gray-200" {...register('price', { required: true, min: 0 })} />
-        </div>
-
-        <div className="flex flex-col mb-2">
-          <span>Precio Anterior ($) - Opcional</span>
-          <input type="number" step="0.01" className="p-2 border rounded-md bg-gray-200" {...register('oldPrice')} />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-1">Precio Actual ($)</span>
+            <input type="number" step="0.01" className="p-3 border border-gray-200 rounded-xl bg-[#f7f7f5]" {...register('price', { required: true, min: 0 })} />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-1">Precio Anterior</span>
+            <input type="number" step="0.01" className="p-3 border border-gray-200 rounded-xl bg-[#f7f7f5]" {...register('oldPrice')} />
+          </div>
         </div>
       </div>
 
-      <div className="w-full">
-        <div className="flex flex-col mb-2">
-          <span>Categoría</span>
-          <select className="p-2 border rounded-md bg-gray-200" {...register('categoryId', { required: true })}>
+      {/* Columna Derecha: Clasificación e Imágenes */}
+      <div className="space-y-4">
+        <div className="flex flex-col">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-1">Categoría</span>
+          <select className="p-3 border border-gray-200 rounded-xl bg-[#f7f7f5] appearance-none" {...register('categoryId', { required: true })}>
             <option value="">[Seleccione]</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -101,25 +114,59 @@ export const ProductForm = ({ product, categories }: Props) => {
           </select>
         </div>
 
-        <div className="flex flex-col mb-2">
-          <span>Tags (separados por coma)</span>
-          <input type="text" className="p-2 border rounded-md bg-gray-200" {...register('tags')} />
+        <div className="flex flex-col">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-1">Tags (separados por coma)</span>
+          <input type="text" className="p-3 border border-gray-200 rounded-xl bg-[#f7f7f5]" {...register('tags')} />
         </div>
 
-        <div className="flex flex-col mb-2">
-          <span className="font-bold text-blue-700 text-lg">URL de Descarga (PDF/E-book)</span>
+        {/* Sección de Imágenes */}
+        <div className="flex flex-col mt-4">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#9ead6b] mb-2">Imágenes del Producto</span>
+          
+          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#9ead6b]/30 rounded-2xl cursor-pointer hover:bg-[#f7f7f5] transition-all">
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <IoCloudUploadOutline className="w-8 h-8 text-[#9ead6b] mb-2" />
+              <p className="text-xs text-gray-500">Haz clic para subir (puedes elegir varias)</p>
+            </div>
+            <input 
+              type="file" 
+              multiple 
+              className="hidden" 
+              accept="image/png, image/jpeg, image/jpg" 
+              {...register('images')} 
+            />
+          </label>
+
+          {/* Galería de imágenes ya existentes (Si estás editando) */}
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            {product.ProductImage?.map((img) => (
+              <div key={img.id} className="relative aspect-square rounded-lg overflow-hidden group">
+                <Image src={img.url} alt={product.title ?? ''} fill className="object-cover" />
+                <button 
+                  type="button"
+                  className="absolute inset-0 bg-red-500/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => console.log('Borrar imagen')} // Aquí llamarías a la acción de borrar imagen
+                >
+                  <IoTrashOutline className="text-white text-xl" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col p-4 bg-[#eef3da] rounded-2xl border border-[#9ead6b]/20">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-[#5C4B3D] mb-1">Link de Entrega Digital</span>
           <input
             type="text"
-            placeholder="https://tu-almacenamiento.com/ebook.pdf"
-            className="p-2 border-2 border-blue-300 rounded-md bg-white"
+            placeholder="URL del PDF"
+            className="p-2 border border-[#9ead6b]/30 rounded-lg bg-white text-sm"
             {...register('downloadUrl', { required: true })}
           />
-          <p className="text-xs text-gray-500 mt-1 italic">
-            Este link solo se mostrará al cliente una vez pagada la orden.
-          </p>
         </div>
 
-        <button className="btn-primary w-full mt-5">Guardar E-book</button>
+        <button className="w-full bg-[#5C4B3D] text-white py-4 rounded-full font-bold uppercase text-[11px] tracking-widest shadow-lg hover:bg-[#4a3c31] transition-all mt-6">
+          Guardar E-book
+        </button>
       </div>
     </form>
   );

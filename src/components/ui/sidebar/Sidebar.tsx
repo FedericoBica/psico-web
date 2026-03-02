@@ -8,8 +8,7 @@ import {
   IoPeopleOutline, IoPersonOutline, IoSearchOutline,
   IoTicketOutline, IoBookOutline, IoDocumentTextOutline,
   IoSettingsOutline, IoLibraryOutline, IoAddCircleOutline,
-  IoHomeOutline,
-  IoMailOutline,
+  IoHomeOutline, IoMailOutline,
 } from 'react-icons/io5';
 import { useUIStore } from '@/store';
 import { logout } from '@/actions';
@@ -103,17 +102,20 @@ export const Sidebar = () => {
           />
         </form>
 
-        {/* ── Navegación ── */}
+        {/* ── Navegación ──
+             Todos los links están siempre disponibles en el sidebar.
+             En mobile (< md) el TopMenu los oculta, así que aquí
+             son el único acceso. En desktop también están por comodidad. */}
         <div className="flex flex-col gap-1 mb-6">
           <p className="text-[9px] uppercase tracking-[0.3em] text-[#aaaaaa] font-bold mb-1 px-1">
             Navegación
           </p>
-           <NavItem href="/"           icon={IoHomeOutline}          label="Inicio" />
-            <NavItem href="/#sobre-mi"  icon={IoPersonOutline}        label="Sobre Mí" />
-            <NavItem href="/#servicios" icon={IoBookOutline}          label="Servicios" />
-            <NavItem href="/#tienda"    icon={IoLibraryOutline}       label="Tienda" />
-            <NavItem href="/blog"       icon={IoDocumentTextOutline}  label="Blog" />
-            <NavItem href="/#contacto"  icon={IoMailOutline}          label="Contacto" />
+          <NavItem href="/"           icon={IoHomeOutline}          label="Inicio" />
+          <NavItem href="/#sobre-mi"  icon={IoPersonOutline}        label="Sobre Mí" />
+          <NavItem href="/#servicios" icon={IoBookOutline}          label="Servicios" />
+          <NavItem href="/tienda"    icon={IoLibraryOutline}       label="Tienda" />
+          <NavItem href="/blog"       icon={IoDocumentTextOutline}  label="Blog" />
+          <NavItem href="/#contacto"  icon={IoMailOutline}          label="Contacto" />
         </div>
 
         {/* ── Mi cuenta ── */}

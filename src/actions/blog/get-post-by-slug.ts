@@ -8,7 +8,10 @@ export const getPostBySlug = async (slug: string) => {
     const post = await prisma.post.findUnique({
       where: { slug }
     });
-    return post;
+    return {
+      ...post,
+      tags: (post as any).tags || []
+    }
   } catch (error) {
     return null;
   }

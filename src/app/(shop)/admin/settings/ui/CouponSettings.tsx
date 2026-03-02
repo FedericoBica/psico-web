@@ -31,7 +31,7 @@ export const CouponSettings = ({ initialCoupons }: Props) => {
         <div className="flex flex-col sm:flex-row gap-4">
           <input
             type="text"
-            placeholder="CÓDIGO (EJ: VIBRA20)"
+            placeholder="CÓDIGO (EJ: OFERTA20)"
             className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white uppercase focus:border-pink-500 outline-none transition-all"
             value={code}
             onChange={(e) => setCode(e.target.value)}

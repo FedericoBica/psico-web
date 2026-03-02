@@ -4,98 +4,58 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/auth.config';
 
-export type ConfigKey = 'topbar' | 'home' | 'store';
+// Definimos solo la clave de cupones
+export type ConfigKey = 'coupons';
 
-export interface TopbarConfig {
-  messages: string[];
-  backgroundColor: string;
-  isActive: boolean;
-}
-
-export interface HomeConfig {
-  heroTitle: string;
-  heroTitleAccent: string;
-  heroSubtitle: string;
-  heroTagline: string;
-}
-
-export interface StoreInfo {
-  storeName: string;
-  metaDescription: string;
+export interface CouponConfig {
+  active: boolean;
+  discountPercentage: number;
+  globalCode: string;
 }
 
 export type AllConfig = {
-  topbar: TopbarConfig;
-  home:   HomeConfig;
-  store:  StoreInfo;
+  coupons: CouponConfig;
 };
 
 const CONFIG_DEFAULTS: AllConfig = {
-  topbar: {
-    messages: [
-      '📚 Descargá tus e-books al instante después del pago',
-      '🔒 Compra 100% segura con Mercado Pago',
-    ],
-    backgroundColor: '#db2777',
-    isActive: true,
-  },
-  home: {
-    heroTitle:       'Potencia tus sesiones,',
-    heroTitleAccent: '',
-    heroSubtitle:    'Recursos psicopedagogicos para la practica profesional',
-    heroTagline:     '',
-  },
-  store: {
-    storeName:       'Lic. Gimena Medrano',
-    metaDescription: 'Plataforma de recursos digitales y herramientas clínicas de psicopedagogia',
+  coupons: {
+    active: false,
+    discountPercentage: 0,
+    globalCode: 'BIENVENIDA',
   },
 };
 
-export const getStoreConfig = async <K extends ConfigKey>(
-  key: K
-): Promise<AllConfig[K]> => {
+// Obtener la configuración de cupones
+export const getCouponConfig = async (): Promise<CouponConfig> => {
   try {
-    const row = await prisma.storeConfig.findUnique({ where: { key } });
-    if (!row) return CONFIG_DEFAULTS[key];
-    return { ...CONFIG_DEFAULTS[key], ...(row.value as object) } as AllConfig[K];
+    const row = await prisma.storeConfig.findUnique({ where: { key: 'coupons' } });
+    if (!row) return CONFIG_DEFAULTS.coupons;
+    
+    return { 
+      ...CONFIG_DEFAULTS.coupons, 
+      ...(row.value as object) 
+    } as CouponConfig;
   } catch (error) {
-    console.error(`Error al obtener config ${key}:`, error);
-    return CONFIG_DEFAULTS[key];
+    console.error(`Error al obtener config de cupones:`, error);
+    return CONFIG_DEFAULTS.coupons;
   }
 };
 
-export const getAllStoreConfig = async (): Promise<AllConfig> => {
-  try {
-    const rows = await prisma.storeConfig.findMany();
-    const map = rows.reduce((acc: Record<string, object>, r: typeof rows[number]) => {
-      acc[r.key] = r.value as object;
-      return acc;
-    }, {});
-
-    return {
-      topbar: { ...CONFIG_DEFAULTS.topbar, ...(map.topbar ?? {}) },
-      home:   { ...CONFIG_DEFAULTS.home,   ...(map.home   ?? {}) },
-      store:  { ...CONFIG_DEFAULTS.store,  ...(map.store  ?? {}) },
-    };
-  } catch {
-    return CONFIG_DEFAULTS;
-  }
-};
-
-export const updateStoreConfig = async (
-  key: ConfigKey,
-  value: Record<string, unknown>,
+// Actualizar la configuración de cupones (Solo Admin)
+export const updateCouponConfig = async (
+  value: CouponConfig,
 ): Promise<{ ok: boolean; message?: string }> => {
   const session = await auth();
+  
   if (session?.user.role !== 'admin') {
     return { ok: false, message: 'No tienes permisos' };
   }
 
   try {
     await prisma.storeConfig.upsert({
-      where:  { key },
-      update: { value },
-      create: { key, value },
+      where:  { key: 'coupons' },
+      update: { value: value as any },
+      create: { key: 'coupons', value: value as any },
     });
 
     revalidatePath('/');
@@ -103,7 +63,7 @@ export const updateStoreConfig = async (
 
     return { ok: true };
   } catch (error) {
-    console.error(`Error guardando config "${key}":`, error);
+    console.error(`Error guardando cupones:`, error);
     return { ok: false, message: 'Error al guardar en la base de datos.' };
   }
 };

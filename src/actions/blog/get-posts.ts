@@ -9,7 +9,10 @@ export const getPosts = async () => {
       where: { isPublished: true },
       orderBy: { createdAt: 'desc' }
     });
-    return posts;
+    return posts.map(post => ({
+      ...post,
+      tags: (post as any).tags || [] 
+    }));
   } catch (error) {
     return [];
   }

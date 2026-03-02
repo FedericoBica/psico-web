@@ -10,8 +10,8 @@ export default async function BlogPage() {
   return (
     <div className="px-5 mb-20 max-w-[1200px] mx-auto min-h-screen bg-white">
       <Title 
-        title="Espacio de Reflexión" 
-        subtitle="Artículos y guías sobre bienestar, psicología y crecimiento personal."
+        title="Materiales y recursos" 
+        subtitle="Artículos y guías"
         className="mb-10"
       />
 

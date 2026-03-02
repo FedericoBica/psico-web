@@ -1,19 +1,15 @@
+// src/app/(shop)/admin/layout.tsx
 import { auth } from '@/auth.config';
 import { redirect } from 'next/navigation';
 
-export default async function AdminLayout({children}: {
- children: React.ReactNode;
+export default async function AdminLayout({ children }: {
+  children: React.ReactNode;
 }) {
-
   const session = await auth();
 
-  if ( session?.user.role !== 'admin' ) {
-    redirect('/login');
+  if (session?.user.role !== 'admin') {
+    redirect('/auth/login');  // ← antes decía '/login' (inexistente)
   }
 
-  return (
-    <>
-      { children }
-    </>
-  );
+  return <>{children}</>;
 }
