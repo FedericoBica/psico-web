@@ -9,10 +9,7 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
-      name: string;
-      email: string;
       role: string;
-      image?: string;
     } & DefaultSession['user'];
   }
 }
@@ -22,18 +19,15 @@ export const authConfig: NextAuthConfig = {
     signIn: '/auth/login',
     newUser: '/auth/new-account',
   },
-  // IMPORTANTE: Agregamos el secret explícitamente aquí también
+  // Forzamos el secret aquí
   secret: process.env.AUTH_SECRET,
+  trustHost: true, // <--- Añade esto también aquí
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      // Aquí podrías proteger rutas si quisieras en el futuro
+    authorized({ auth }) {
       return true;
     },
     jwt({ token, user }) {
-      if (user) {
-        token.data = user;
-      }
+      if (user) token.data = user;
       return token;
     },
     session({ session, token }) {
