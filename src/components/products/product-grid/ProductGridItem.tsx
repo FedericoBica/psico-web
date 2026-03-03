@@ -11,6 +11,7 @@ interface Props { product: Product; }
 const getImageSrc = (src: string): string => {
   if (!src) return '/imgs/placeholder.jpg';
   if (src.startsWith('http')) return src;
+  if (src.startsWith('/')) return src;
   return `/products/${src}`;
 };
 

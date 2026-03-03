@@ -9,9 +9,10 @@ interface Props {
   product: Product | null;
 }
 
-const getImageSrc = (src: string): string => {
+const getImageSrc = (src?: string | null): string => {
   if (!src) return '/imgs/placeholder.jpg';
   if (src.startsWith('http')) return src;
+  if (src.startsWith('/')) return src;      
   return `/products/${src}`;
 };
 

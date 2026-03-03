@@ -16,16 +16,16 @@ interface Props {
 export const ProductImage = ({ src, alt, className, style, width, height, onMouseEnter, onMouseLeave }: Props) => {
 
   // Forzamos el placeholder si no hay src o si es un string vacío
-  let localSrc: string;
-
-  if ( !src ) {
-    localSrc = '/imgs/placeholder.jpg';
-  } else if ( src.startsWith('http') ) {
-    localSrc = src;
-  } else {
-    // Solo si estás SEGURO que tenés imágenes en public/products/
-    localSrc = `/products/${ src }`;
-  }
+ let localSrc: string;
+if (!src) {
+  localSrc = '/imgs/placeholder.jpg';
+} else if (src.startsWith('http')) {
+  localSrc = src;
+} else if (src.startsWith('/')) {
+  localSrc = src;                           // ← esta línea es la que falta
+} else {
+  localSrc = `/products/${src}`;
+}
 
   return (
     <Image

@@ -1,12 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { HomeConfig } from '@/actions/config/store-config';
+import {  } from '@/actions/config/store-config';
 
-interface Props {
-  config: HomeConfig;
-}
 
-export const ProductHero = ({ config }: Props) => {
+export const ProductHero = () => {
+
+  const whatsappNumber = "59897454505";  
+  
+  const getWhatsappLink = (servicio: string) => {
+    const message = encodeURIComponent(`Hola Gimena, me gustaría realizar una consulta sobre: ${servicio}.`);
+    return `https://wa.me/${whatsappNumber}?text=${message}`;
+  };
+
+
   return (
     <section className="relative w-full min-h-[90vh] bg-white overflow-hidden flex flex-col">
 
@@ -63,14 +69,15 @@ export const ProductHero = ({ config }: Props) => {
           {/* CTAs en fila, centrados debajo del texto */}
           <div className="flex flex-row flex-wrap justify-center gap-3">
             <Link
-              href="/#servicios"
+              href={getWhatsappLink("Evaluacion Psicopedagógica")}
               className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#2d2d2d] text-[10px] font-bold uppercase tracking-[0.18em] rounded-full hover:bg-[#eef3da] transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shadow-sm"
             >
               Solicitar evaluación psicopedagógica
             </Link>
             <Link
-              href="/#servicios"
+              href={getWhatsappLink("Intervención Psicopedagógica")}
               className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#2d2d2d] text-[10px] font-bold uppercase tracking-[0.18em] rounded-full hover:bg-[#eef3da] transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shadow-sm"
+              target='_blank'
             >
               Solicitar intervención psicopedagógica
             </Link>
