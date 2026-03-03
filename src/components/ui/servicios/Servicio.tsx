@@ -4,7 +4,7 @@ import { IoLogoWhatsapp } from 'react-icons/io5';
 
 export const Servicios = () => {
 
-  const whatsappNumber = "59897464500"; // Basado en 097 464 500 
+  const whatsappNumber = "59897454505";  
   
   const getWhatsappLink = (servicio: string) => {
     const message = encodeURIComponent(`Hola Gimena, me gustaría realizar una consulta sobre: ${servicio}.`);
