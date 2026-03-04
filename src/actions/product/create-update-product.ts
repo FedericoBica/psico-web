@@ -1,6 +1,5 @@
 'use server';
 
-
 import prisma from '@/lib/prisma';
 type TransactionClient = Parameters<typeof prisma.$transaction>[0] extends (tx: infer T) => unknown ? T : never;
 import { revalidatePath } from 'next/cache';
@@ -19,7 +18,11 @@ const productSchema = z.object({
   categoryId:  z.string().uuid(),
   tags:        z.string(),
   downloadUrl: z.string().url('Debe ser una URL válida para el PDF'),
-  isPublished: z.preprocess((val) => val === 'true', z.boolean()),
+  // ✅ FIX: acepta 'true', true, 'on', o undefined — por defecto es true
+  isPublished: z.preprocess(
+    (val) => val === 'true' || val === true || val === 'on' || val === undefined,
+    z.boolean()
+  ).default(true),
 });
 
 export const createUpdateProduct = async (formData: FormData) => {
@@ -27,7 +30,8 @@ export const createUpdateProduct = async (formData: FormData) => {
   const productParsed = productSchema.safeParse(data);
 
   if (!productParsed.success) {
-    console.log(productParsed.error);
+    // ✅ FIX: console.log del objeto Zod explota en Vercel — usar JSON.stringify
+    console.log('Validation errors:', JSON.stringify(productParsed.error.errors));
     return { ok: false };
   }
 
@@ -90,7 +94,7 @@ export const createUpdateProduct = async (formData: FormData) => {
     };
 
   } catch (error) {
-    console.log(error);
+    console.log('Error saving product:', error instanceof Error ? error.message : String(error));
     return { ok: false, message: 'Error al procesar el producto' };
   }
 };
