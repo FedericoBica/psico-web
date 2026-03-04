@@ -2,10 +2,11 @@
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Product, Category } from '@/interfaces';
-import { createUpdateProduct } from '@/actions';
+import { createUpdateProduct, deleteProductImage } from '@/actions';
 import { useRouter } from 'next/navigation';
 import { IoCloudUploadOutline, IoTrashOutline } from 'react-icons/io5';
 import Image from 'next/image';
+import { useState } from 'react';
 
 interface Props {
   product: Partial<Product> & { ProductImage?: any[] };
@@ -26,6 +27,7 @@ interface FormInputs {
 
 export const ProductForm = ({ product, categories }: Props) => {
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const {
     register,
@@ -67,8 +69,18 @@ export const ProductForm = ({ product, categories }: Props) => {
     const { ok, product: updatedProduct } = await createUpdateProduct(formData);
 
     if (ok) {
-      router.replace(`/admin/products/${updatedProduct?.slug}`);
+      router.replace(`/admin/product/${updatedProduct?.slug}`);
     }
+  };
+
+
+  const onDeleteImage = async (id: string, url: string) => {
+    setIsDeleting(true);
+    const { ok } = await deleteProductImage(id, url);
+    if (ok) {
+      router.refresh();
+    }
+    setIsDeleting(false);
   };
 
   return (
