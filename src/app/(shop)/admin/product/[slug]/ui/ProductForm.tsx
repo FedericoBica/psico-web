@@ -2,7 +2,7 @@
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Product, Category } from '@/interfaces';
-import { createUpdateProduct, deleteProductImage } from '@/actions';
+import { createUpdateProduct, deleteProduct, deleteProductImage } from '@/actions';
 import { useRouter } from 'next/navigation';
 import { IoCloudUploadOutline, IoTrashOutline } from 'react-icons/io5';
 import Image from 'next/image';
@@ -23,6 +23,7 @@ interface FormInputs {
   categoryId: string;
   downloadUrl: string;
   images?: FileList;
+  isPublished: boolean;
 }
 
 export const ProductForm = ({ product, categories }: Props) => {
@@ -43,6 +44,7 @@ export const ProductForm = ({ product, categories }: Props) => {
       tags:        product.tags?.join(', ') ?? '',
       categoryId:  product.categoryId ?? '',
       downloadUrl: (product as any).downloadUrl ?? '',
+      isPublished: product.isPublished ?? true,
     },
   });
 
@@ -58,7 +60,7 @@ export const ProductForm = ({ product, categories }: Props) => {
     formData.append('tags',        data.tags);
     formData.append('categoryId',  data.categoryId);
     formData.append('downloadUrl', data.downloadUrl);
-    formData.append('isPublished', 'true'); // ✅ FIX: siempre se envía
+    formData.append('isPublished', data.isPublished ? 'true' : 'false'); // ✅ FIX: siempre se envía
 
     if (data.images) {
       for (let i = 0; i < data.images.length; i++) {
@@ -79,6 +81,22 @@ export const ProductForm = ({ product, categories }: Props) => {
     if (ok) router.refresh();
     setIsDeleting(false);
   };
+
+  const onDeleteProduct = async () => {
+  if (!product.id) return; // Si es un producto nuevo, no hace nada
+
+  if (window.confirm('¿Estás seguro de que querés eliminar este producto por completo? Esta acción no se puede deshacer.')) {
+    setIsDeleting(true);
+    const { ok, message } = await deleteProduct(product.id);
+    
+    if (ok) {
+      router.replace('/admin/products');
+    } else {
+      alert(message); // Por si tiene órdenes asociadas y no se puede borrar
+      setIsDeleting(false);
+    }
+  }
+};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -181,12 +199,35 @@ export const ProductForm = ({ product, categories }: Props) => {
           />
         </div>
 
+        <div className="flex items-center mb-4 p-4 bg-[#f7f7f5] rounded-2xl border border-gray-100">
+        <input
+          type="checkbox"
+          id="isPublished"
+          className="w-5 h-5 accent-[#9ead6b] cursor-pointer"
+          {...register('isPublished')}
+        />
+        <label htmlFor="isPublished" className="ml-3 text-sm font-medium text-[#5C4B3D] cursor-pointer">
+          Publicar este E-book (será visible en la tienda)
+        </label>
+      </div>
+
         <button
           type="submit"
           className="w-full bg-[#9ead6b] text-white py-4 rounded-full font-bold uppercase text-[11px] tracking-widest shadow-lg hover:bg-[#7a9347] transition-all mt-6 active:scale-[0.98]"
         >
           Guardar E-book
         </button>
+
+        { product.id && (
+        <button
+          type="button"
+          disabled={isDeleting}
+          onClick={onDeleteProduct}
+          className="w-full mt-4 text-red-600 text-[10px] uppercase tracking-widest font-bold hover:underline disabled:text-gray-400"
+        >
+          Eliminar este E-book permanentemente
+        </button>
+      )}
       </div>
     </form>
   );
