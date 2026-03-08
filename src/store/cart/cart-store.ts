@@ -1,31 +1,32 @@
-import { create } from 'zustand'
+// src/store/cart/cart-store.ts
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// 1. Interfaz simplificada para productos digitales
 export interface CartProduct {
-  id: string;
+  id: string;          // productId-format  (ej: "abc-digital" / "abc-physical")
   slug: string;
   title: string;
   price: number;
   quantity: number;
   image: string;
+  format: 'digital' | 'physical';
 }
 
 interface State {
   cart: CartProduct[];
 
-  // Métodos
   getTotalItems: () => number;
   getSummaryInformation: () => {
     subTotal: number;
     total: number;
     itemsInCart: number;
   };
+  hasPhysicalItems: () => boolean;
 
-  addProductToCart: (product: CartProduct) => void;
+  addProductToCart:    (product: CartProduct) => void;
   updateProductQuantity: (product: CartProduct, quantity: number) => void;
-  removeProduct: (product: CartProduct) => void;
-  clearCart: () => void;
+  removeProduct:       (product: CartProduct) => void;
+  clearCart:           () => void;
 }
 
 export const useCartStore = create<State>()(
@@ -33,80 +34,48 @@ export const useCartStore = create<State>()(
     (set, get) => ({
       cart: [],
 
-      // Retorna la cantidad total de archivos/items
-      getTotalItems: () => {
-        const { cart } = get();
-        return cart.reduce((total, item) => total + item.quantity, 0);
-      },
+      getTotalItems: () =>
+        get().cart.reduce((total, item) => total + item.quantity, 0),
 
-      // Resumen simplificado: Solo lo económico
       getSummaryInformation: () => {
         const { cart } = get();
-
-        const subTotal = cart.reduce(
-          (subTotal, product) => product.quantity * product.price + subTotal,
-          0
-        );
-        
-        const itemsInCart = cart.reduce(
-          (total, item) => total + item.quantity, 0
-        );
-
-        return {
-          subTotal,
-          total: subTotal, // En digitales, total suele ser igual al subtotal (sin tax/envío)
-          itemsInCart,
-        };
+        const subTotal = cart.reduce((s, p) => s + p.quantity * p.price, 0);
+        const itemsInCart = cart.reduce((s, p) => s + p.quantity, 0);
+        return { subTotal, total: subTotal, itemsInCart };
       },
 
-      addProductToCart: (product: CartProduct) => {
+      // ¿Hay algún libro físico en el carrito?
+      hasPhysicalItems: () =>
+        get().cart.some((p) => p.format === 'physical'),
+
+      addProductToCart: (product) => {
         const { cart } = get();
-
-        // 2. Revisar si el producto ya existe en el carrito
-        const productInCart = cart.some((item) => item.id === product.id);
-
-        if (!productInCart) {
+        const existing = cart.find((item) => item.id === product.id);
+        if (!existing) {
           set({ cart: [...cart, product] });
           return;
         }
-
-        // 3. Si ya existe, solo aumentamos la cantidad
-        const updatedCartProducts = cart.map((item) => {
-          if (item.id === product.id) {
-            return { ...item, quantity: item.quantity + product.quantity };
-          }
-          return item;
+        set({
+          cart: cart.map((item) =>
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + product.quantity }
+              : item
+          ),
         });
-
-        set({ cart: updatedCartProducts });
       },
 
-      updateProductQuantity: (product: CartProduct, quantity: number) => {
-        const { cart } = get();
-        const updatedCartProducts = cart.map((item) => {
-          if (item.id === product.id) {
-            return { ...item, quantity: quantity };
-          }
-          return item;
-        });
+      updateProductQuantity: (product, quantity) =>
+        set({
+          cart: get().cart.map((item) =>
+            item.id === product.id ? { ...item, quantity } : item
+          ),
+        }),
 
-        set({ cart: updatedCartProducts });
-      },
+      removeProduct: (product) =>
+        set({ cart: get().cart.filter((item) => item.id !== product.id) }),
 
-      removeProduct: (product: CartProduct) => {
-        const { cart } = get();
-        const updatedCartProducts = cart.filter(
-          (item) => item.id !== product.id
-        );
-        set({ cart: updatedCartProducts });
-      },
-
-      clearCart: () => {
-        set({ cart: [] });
-      },
+      clearCart: () => set({ cart: [] }),
     }),
-    {
-      name: 'shopping-cart',
-    }
+    { name: 'shopping-cart' }
   )
 );

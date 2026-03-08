@@ -11,6 +11,9 @@ export interface Product {
   categoryId: string;
   isPublished: boolean;
   downloadUrl: string;
+
+  hasPhysical: boolean;
+  physicalPrice?: number | null;
 }
 
 export interface CartProduct {
@@ -20,6 +23,7 @@ export interface CartProduct {
   price: number;
   quantity: number;
   image: string;
+  format: 'digital' | 'physical';
 }
 
 export interface ProductImage {

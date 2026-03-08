@@ -6,7 +6,6 @@ import prisma from '@/lib/prisma';
 
 export const getStockBySlug = async( slug: string ): Promise<number> => {
 
-  try {
    try {
     const product = await prisma.product.findFirst({
       where: { slug },
@@ -17,6 +16,5 @@ export const getStockBySlug = async( slug: string ): Promise<number> => {
  
   } catch (error) {
     return 0;
- }
-
-
+  }
+}

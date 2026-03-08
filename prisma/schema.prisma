@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum Role {
   admin
   user
@@ -27,11 +26,15 @@ model Product {
   oldPrice     Float?
   slug         String   @unique
   tags         String[] @default([])
-  downloadUrl  String   // Obligatorio para tus E-books
+  downloadUrl  String
   isPublished  Boolean  @default(true)
-  
+
+  // Libro físico
+  hasPhysical   Boolean @default(false)
+  physicalPrice Float?
+
   // Relaciones
-  category     Category @relation(fields: [categoryId], references: [id])
+  category     Category       @relation(fields: [categoryId], references: [id])
   categoryId   String
   ProductImage ProductImage[]
   OrderItem    OrderItem[]
@@ -56,9 +59,9 @@ model User {
   role          Role      @default(user)
   image         String?
 
-  // Relaciones
-  Order         Order[]
+  Order Order[]
 }
+
 model Order {
   id           String    @id @default(uuid())
   subTotal     Float
@@ -66,25 +69,31 @@ model Order {
   itemsInOrder Int
   isPaid       Boolean   @default(false)
   paidAt       DateTime?
-  
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
 
-  // Relaciones
-  userId       String?
-  user         User?     @relation(fields: [userId], references: [id])
-  buyerEmail   String?   // Para invitados
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  OrderItem    OrderItem[]
-  transactionId String?  // Mercado Pago  
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id])
+  buyerEmail String?
+
+  // Datos de envío para libros físicos
+  shippingName    String?
+  shippingPhone   String?
+  shippingAddress String?
+  shippingCity    String?
+  shippingDept    String?
+
+  OrderItem     OrderItem[]
+  transactionId String?
 }
 
 model OrderItem {
   id       String @id @default(uuid())
   quantity Int
   price    Float
+  format   String @default("digital")  // "digital" | "physical"
 
-  // Relaciones
   order   Order  @relation(fields: [orderId], references: [id])
   orderId String
 
@@ -92,33 +101,30 @@ model OrderItem {
   productId String
 }
 
-
 model Coupon {
-  id          String   @id @default(uuid())
-  code        String   @unique
-  discount    Int      // Porcentaje (ej: 10 para 10%)
-  isActive    Boolean  @default(true)
-  validUntil  DateTime?
-  createdAt   DateTime  @default(now())
+  id         String    @id @default(uuid())
+  code       String    @unique
+  discount   Int
+  isActive   Boolean   @default(true)
+  validUntil DateTime?
+  createdAt  DateTime  @default(now())
 }
 
 model Post {
   id          String   @id @default(uuid())
   title       String
   slug        String   @unique
-  excerpt     String   // Un resumen corto para la lista
-  content     String   @db.Text // El contenido largo
-  image       String   // URL de la imagen de portada
+  excerpt     String
+  content     String   @db.Text
+  image       String
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
 }
 
 model StoreConfig {
   id        String   @id @default(uuid())
   key       String   @unique
-  value     Json     // Aquí guardaremos los paquetes de configuración
+  value     Json
   updatedAt DateTime @updatedAt
 }
-
