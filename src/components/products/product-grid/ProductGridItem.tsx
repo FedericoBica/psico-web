@@ -18,11 +18,13 @@ const getImageSrc = (src: string): string => {
 export const ProductGridItem = ({ product }: Props) => {
   const [displayImage] = useState(product.images[0]);
   const imageSrc = getImageSrc(displayImage);
-  const hasDiscount   = (product.oldPrice ?? 0) > product.price;
-  const discountPct   = hasDiscount
-    ? Math.round(((product.oldPrice! - product.price) / product.oldPrice!) * 100)
+  const oldPrice = product.oldPrice ?? 0;
+  const hasDiscount = oldPrice > 0 && oldPrice > product.price;
+  
+  const discountPct = hasDiscount
+    ? Math.round(((oldPrice - product.price) / oldPrice) * 100)
     : 0;
-
+    
   return (
     <div className="group rounded-none overflow-hidden bg-white border border-[#e3e3e3] hover:border-[#c9d894] hover:shadow-lg transition-all duration-300 flex flex-col">
 

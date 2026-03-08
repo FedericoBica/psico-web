@@ -125,7 +125,7 @@ export const AddToCart = ({ product }: Props) => {
         <IoCartOutline size={20} />
         <span>
           {product.hasPhysical
-            ? `Agregar ${format === 'digital' ? 'PDF' : 'libro físico'} — ${currencyFormat(selectedPrice)}`
+            ? `Agregar ${format === 'digital' ? 'libro digital' : 'libro físico'}}`
             : 'Agregar al Carrito'}
         </span>
       </button>

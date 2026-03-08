@@ -73,7 +73,8 @@ return (
               {currencyFormat(product.price)}
             </span>
 
-            {product.oldPrice && product.oldPrice > product.price && (
+            {/* ✅ CORRECCIÓN: Validamos que oldPrice exista, sea mayor a 0 y mayor al precio actual */}
+            {product.oldPrice !== null && product.oldPrice > 0 && product.oldPrice > product.price && (
               <div className="flex items-center gap-2 bg-sage-50 border border-sage-200 py-1 px-3 rounded-full">
                 <span className="text-sm text-gray-400 line-through">
                   {currencyFormat(product.oldPrice)}
@@ -84,7 +85,6 @@ return (
               </div>
             )}
           </div>
-
           <AddToCart product={product} />
 
           <div className="block md:hidden mt-12 pt-8 border-t border-sage-100">
