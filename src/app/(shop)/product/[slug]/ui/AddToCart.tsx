@@ -29,7 +29,7 @@ export const AddToCart = ({ product }: Props) => {
   };
 
   return (
-     <div className="flex flex-col gap-4">
+     <div className="flex flex-col gap-4 mt-8">
       <div className="flex items-center gap-2 text-sage-600 bg-sage-50 w-fit px-3 py-1 rounded-full border border-sage-100">
         <IoBookOutline size={16} />
         <span className="text-xs font-bold uppercase tracking-wider">Acceso Digital Vitalicio</span>

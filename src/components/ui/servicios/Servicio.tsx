@@ -44,7 +44,7 @@ export const Servicios = () => {
                 </p>
               </div>
               <Link 
-                  href={getWhatsappLink("Intervención Psicopedagógica")}
+                  href={getWhatsappLink("Evaluación Psicopedagógica")}
                   target="_blank"
                   className="inline-flex items-center justify-center gap-2 mt-7 px-6 py-3 bg-[#9ead6b] text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#4a3c31] transition-all shadow-md active:scale-95"
                 >

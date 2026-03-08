@@ -24,7 +24,7 @@ export const ProductGridItem = ({ product }: Props) => {
     : 0;
 
   return (
-    <div className="group rounded-2xl overflow-hidden bg-white border border-[#e3e3e3] hover:border-[#c9d894] hover:shadow-lg transition-all duration-300 flex flex-col">
+    <div className="group rounded-none overflow-hidden bg-white border border-[#e3e3e3] hover:border-[#c9d894] hover:shadow-lg transition-all duration-300 flex flex-col">
 
       {/* Imagen */}
       <Link href={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-[#e3e3e3]">
@@ -49,10 +49,6 @@ export const ProductGridItem = ({ product }: Props) => {
         >
           {product.title}
         </Link>
-
-        <p className="text-[#777777] text-xs font-light line-clamp-2 mb-4 leading-relaxed">
-          {product.description}
-        </p>
 
         <div className="mt-auto flex items-center justify-between gap-2">
           <div className="flex items-baseline gap-2">

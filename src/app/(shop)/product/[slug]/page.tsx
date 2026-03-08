@@ -18,6 +18,7 @@ import { ProductSteps } from "@/components/product/ui/ProductSteps";
 import { RelatedProducts } from "@/components/product/related/RelatedProducts";
 import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
 import { currencyFormat } from "@/utils";
+import { ProductDescription } from "@/components/product/ui/ProductDescription";
 
 interface Props {
   params: {
@@ -50,7 +51,16 @@ return (
               images={product.images}
             />
           </div>
+
+          {/* ✅ NUEVO: Descripción para Computadora (Ancha) */}
+          <div className="hidden md:block mt-12 pt-8 border-t border-sage-100">
+            <h3 className="font-bold text-sm uppercase tracking-widest text-sage-500 mb-4">
+              Sobre este material
+            </h3>
+            <ProductDescription text={product.description}/>
+          </div>
         </div>
+        
 
         {/* Detalles de Compra */}
         <div className="col-span-1">
@@ -77,13 +87,11 @@ return (
 
           <AddToCart product={product} />
 
-          <div className="mt-12 pt-8 border-t border-sage-100">
+          <div className="block md:hidden mt-12 pt-8 border-t border-sage-100">
             <h3 className="font-bold text-sm uppercase tracking-widest text-sage-500 mb-4">
               Sobre este material
             </h3>
-            <p className="text-gray-600 leading-relaxed font-light">
-              {product.description}
-            </p>
+            <ProductDescription text={product.description}/>
           </div>
         </div>
       </div>

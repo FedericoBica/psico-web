@@ -16,8 +16,9 @@ export default async function TiendaPage({ searchParams }: Props) {
     <div className="min-h-screen bg-white">
 
       {/* Header de página */}
-      <div className="bg-[#f7f7f5] border-b border-[#e3e3e3] px-8 md:px-16 lg:px-24 py-14">
-        <div className="max-w-5xl mx-auto">
+      {/* Ajustado px-4 en móvil para ganar espacio lateral */}
+      <div className="bg-[#f7f7f5] border-b border-[#e3e3e3] px-4 md:px-16 lg:px-24 py-14">
+        <div className="max-w-7xl mx-auto"> {/* Aumentado a 7xl para dar aire al diseño ancho */}
           <div className="flex items-center gap-2 mb-4">
             <div className="w-6 h-px bg-[#9ead6b]" />
             <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#9ead6b]">
@@ -32,18 +33,25 @@ export default async function TiendaPage({ searchParams }: Props) {
       </div>
 
       {/* Grid de productos */}
-      <div className="px-8 md:px-16 lg:px-24 py-16">
-        <div className="max-w-5xl mx-auto">
+      {/* Ajustado px-2 en móvil para que los 2 libros por fila no se vean apretados */}
+      <div className="px-2 md:px-16 lg:px-24 py-16">
+        <div className="max-w-7xl mx-auto"> {/* Sincronizado con el header a 7xl */}
           {products.length === 0 ? (
-            <div className="text-center py-24 border border-dashed border-[#e3e3e3] rounded-3xl">
+            <div className="text-center py-24 border border-dashed border-[#e3e3e3] rounded-none">
               <p className="text-[#aaaaaa] font-light italic text-lg">
                 Próximamente nuevos materiales...
               </p>
             </div>
           ) : (
             <>
+              {/* Aquí el ProductGrid ya debe tener el lg:grid-cols-4 que pusimos antes */}
               <ProductGrid products={products} />
-              {totalPages > 1 && <Pagination totalPages={totalPages} />}
+              
+              {totalPages > 1 && (
+                <div className="mt-10">
+                  <Pagination totalPages={totalPages} />
+                </div>
+              )}
             </>
           )}
         </div>

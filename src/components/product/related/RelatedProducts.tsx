@@ -28,8 +28,8 @@ export const RelatedProducts = async ({ categoryId, currentProductId }: Props) =
 
   return (
     <div className="mt-20 pb-20 border-t border-zinc-800 pt-10 px-5 sm:px-0">
-      <h2 className="text-2xl font-black uppercase tracking-tighter text-white mb-8 italic">
-        También te puede gustar <span className="text-pink-500">✦</span>
+      <h2 className="text-2xl font-black uppercase tracking-tighter text-[#9ead6b] mb-8 italic">
+        También te puede gustar <span className="text-[#9ead6b]">✦</span>
       </h2>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
