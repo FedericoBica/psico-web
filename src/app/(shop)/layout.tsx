@@ -1,4 +1,3 @@
-import { getStoreConfig } from '@/actions';
 import { Footer, Sidebar, TopMenu } from '@/components';
 import { ScrollToTop } from '@/components/product/ui/ScrollToTop';
 import { Contacto } from '@/components/ui/contacto/Contacto';

@@ -12,12 +12,13 @@ export const getOrderById = async (id: string) => {
       include: {
         OrderItem: {
           select: {
-            price: true,
+            price:    true,
             quantity: true,
+            format:   true, // ✅ FIX: incluir format para saber si es digital o físico
             product: {
               select: {
-                title: true,
-                slug: true,
+                title:       true,
+                slug:        true,
                 downloadUrl: true,
                 ProductImage: {
                   select: { url: true },
@@ -32,7 +33,6 @@ export const getOrderById = async (id: string) => {
 
     if (!order) return { ok: false, message: `${id} no existe` };
 
-    // Si la orden tiene dueño, verificamos que sea el mismo usuario
     if (order.userId) {
       if (!session?.user) {
         return { ok: false, message: "Debe estar autenticado" };

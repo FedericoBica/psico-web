@@ -1,7 +1,5 @@
 'use client';
 
-// src/app/(shop)/product/[slug]/ui/AddToCart.tsx
-
 import { useState } from 'react';
 import { CartProduct, Product } from '@/interfaces';
 import { useCartStore } from '@/store';
@@ -14,8 +12,6 @@ interface Props {
 
 export const AddToCart = ({ product }: Props) => {
   const addProductToCart = useCartStore((state) => state.addProductToCart);
-
-  // Si tiene físico, el usuario elige; si no, solo digital
   const [format, setFormat] = useState<'digital' | 'physical'>('digital');
 
   const selectedPrice = format === 'physical'
@@ -24,7 +20,7 @@ export const AddToCart = ({ product }: Props) => {
 
   const addToCart = () => {
     const cartProduct: CartProduct = {
-      id:       `${product.id}-${format}`, // ID único por formato
+      id:       `${product.id}-${format}`,
       slug:     product.slug,
       title:    product.title,
       price:    selectedPrice,
@@ -38,7 +34,6 @@ export const AddToCart = ({ product }: Props) => {
   return (
     <div className="flex flex-col gap-5">
 
-      {/* Selector Digital / Físico — solo si tiene físico */}
       {product.hasPhysical && (
         <div className="flex flex-col gap-2">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#777777]">
@@ -46,7 +41,6 @@ export const AddToCart = ({ product }: Props) => {
           </span>
           <div className="grid grid-cols-2 gap-3">
 
-            {/* Digital */}
             <button
               type="button"
               onClick={() => setFormat('digital')}
@@ -72,7 +66,6 @@ export const AddToCart = ({ product }: Props) => {
               </div>
             </button>
 
-            {/* Físico */}
             <button
               type="button"
               onClick={() => setFormat('physical')}
@@ -100,7 +93,6 @@ export const AddToCart = ({ product }: Props) => {
 
           </div>
 
-          {/* Info según formato */}
           <p className="text-xs text-[#777777] font-light mt-1">
             {format === 'digital'
               ? '📥 Descarga inmediata en PDF tras el pago.'
@@ -109,7 +101,6 @@ export const AddToCart = ({ product }: Props) => {
         </div>
       )}
 
-      {/* Badge si solo es digital */}
       {!product.hasPhysical && (
         <div className="flex items-center gap-2 text-[#9ead6b] bg-[#eef3da] w-fit px-3 py-1 rounded-full border border-[#c9d894]">
           <IoDocumentOutline size={16} />
@@ -117,15 +108,15 @@ export const AddToCart = ({ product }: Props) => {
         </div>
       )}
 
-      {/* Botón agregar al carrito */}
       <button
         onClick={addToCart}
         className="w-full bg-[#9ead6b] hover:bg-[#7a9347] text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-[#9ead6b]/20 flex justify-center items-center gap-2 active:scale-[0.98]"
       >
         <IoCartOutline size={20} />
+        {/* ✅ FIX: llave extra eliminada */}
         <span>
           {product.hasPhysical
-            ? `Agregar ${format === 'digital' ? 'libro digital' : 'libro físico'}}`
+            ? `Agregar ${format === 'digital' ? 'libro digital' : 'libro físico'}`
             : 'Agregar al Carrito'}
         </span>
       </button>
