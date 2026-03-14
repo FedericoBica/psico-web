@@ -1,5 +1,7 @@
 'use client';
 
+// src/components/mercadopago/MercadoPagoButton.tsx
+
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 
 interface Props {
@@ -7,13 +9,17 @@ interface Props {
 }
 
 export const MercadoPagoButton = ({ preferenceId }: Props) => {
-  // Inicializa con tu PUBLIC KEY
-  initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!);
+  initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!, {
+    locale: 'es-UY',
+  });
 
   return (
     <div className="relative z-0">
-      <Wallet 
-        initialization={{ preferenceId }} 
+      <Wallet
+        initialization={{
+          preferenceId,
+          redirectMode: 'blank',  // abre MP en pestaña nueva, evita errores de iframe
+        }}
       />
     </div>
   );
