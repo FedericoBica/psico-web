@@ -13,7 +13,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
       body: {
         items: [{
           id: orderId,
-          title: `Orden Vibra #${orderId.split("-").at(-1)}`,
+          title: `Orden #${orderId.split("-").at(-1)}`,
           quantity: 1,
           unit_price: Number(total.toFixed(2)),
           currency_id: 'UYU', 
