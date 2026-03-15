@@ -27,6 +27,7 @@ interface FormInputs {
   images?:       FileList;
   hasPhysical:   boolean;
   physicalPrice?: number;
+  isPublished: boolean;
 }
 
 export const ProductForm = ({ product, categories }: Props) => {
@@ -45,6 +46,7 @@ export const ProductForm = ({ product, categories }: Props) => {
       downloadUrl:   (product as any).downloadUrl  ?? '',
       hasPhysical:   (product as any).hasPhysical  ?? false,
       physicalPrice: (product as any).physicalPrice ?? undefined,
+      isPublished: product.isPublished ?? true
     },
   });
 
@@ -62,7 +64,7 @@ export const ProductForm = ({ product, categories }: Props) => {
     formData.append('tags',          data.tags);
     formData.append('categoryId',    data.categoryId);
     formData.append('downloadUrl',   data.downloadUrl);
-    formData.append('isPublished',   'true');
+    formData.append('isPublished', data.isPublished ? 'true' : 'false');
     formData.append('hasPhysical',   data.hasPhysical ? 'true' : 'false');
     if (data.hasPhysical && data.physicalPrice) {
       formData.append('physicalPrice', data.physicalPrice.toString());
@@ -215,7 +217,17 @@ export const ProductForm = ({ product, categories }: Props) => {
             {...register('downloadUrl', { required: true })}
           />
         </div>
-
+        <div className="flex items-center gap-3 p-4 bg-[#f7f7f5] rounded-2xl border border-[#e3e3e3]">
+          <input
+            type="checkbox"
+            id="isPublished"
+            className="w-5 h-5 accent-[#9ead6b] cursor-pointer"
+            {...register('isPublished')}
+          />
+          <label htmlFor="isPublished" className="text-sm font-bold text-[#2d2d2d] cursor-pointer">
+            E-book Publicado (visible en la tienda)
+          </label>
+        </div>
         <button
           type="submit"
           className="w-full bg-[#9ead6b] text-white py-4 rounded-full font-bold uppercase text-[11px] tracking-widest shadow-lg hover:bg-[#7a9347] transition-all active:scale-[0.98]"
