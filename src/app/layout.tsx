@@ -19,13 +19,12 @@ export const metadata: Metadata = {
     "E-books psicopedagógicos"
   ],
   
-  // Configuración para Redes Sociales (OpenGraph)
   openGraph: {
     title: "Gimena Medrano | Psicopedagogía",
     description: "Recursos, artículos y herramientas para potenciar el aprendizaje y el desarrollo cognitivo.",
     type: "website",
     locale: "es_UY",
-    url: "https://gimenamedrano.com", // Cambialo cuando tengas el dominio final
+    url: "https://psicopedagogagimenamedrano.com", 
     siteName: "Gimena Medrano - Psicopedagoga",
   },
 
