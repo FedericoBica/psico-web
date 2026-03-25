@@ -4,9 +4,7 @@ import { notFound } from "next/navigation";
 import { titleFont } from "@/config/fonts";
 
 interface Props {
-  params: {
-    slug: string;
-  };
+  params: { slug: string; };
 }
 
 export default async function PostBySlugPage({ params }: Props) {
@@ -17,73 +15,75 @@ export default async function PostBySlugPage({ params }: Props) {
 
   return (
     <article className="min-h-screen pb-20 bg-white">
-      {/* Header del Post */}
-      <header className="relative w-full h-[60vh] flex items-end pb-16 overflow-hidden bg-[#FDFBF7]">
+      {/* Header Editorial */}
+      <header className="relative w-full h-[70vh] flex items-end pb-20 overflow-hidden bg-[#FDFBF7]">
         <Image
           src={post.image || '/imgs/placeholder.jpg'}
-          alt={post.title || 'Artículo de Psicopedagogía'}
+          alt={post.title || 'Psicopedagogia'}
           fill
-          className="object-cover opacity-80" // Bajamos opacidad para que se vea más "pastel"
+          className="object-cover opacity-90 transition-transform duration-700 hover:scale-105"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-[#FDFBF7]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
         
-        <div className="relative z-10 px-5 max-w-4xl mx-auto w-full">
-          <div className="flex gap-2 mb-6">
-            {(post.tags || []).map((tag: string) => (
-              <span key={tag} className="bg-white/80 border border-[#9ead6b]/30 text-[#9ead6b] px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.2em]">
-                {tag}
-              </span>
-            ))}
+        <div className="relative z-10 px-8 max-w-5xl mx-auto w-full">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-px bg-[#9ead6b]" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-[#9ead6b]">
+              {post.tags?.[0] || 'Artículo'}
+            </span>
           </div>
-          {/* TÍTULO EDITORIAL: Usamos font-serif y tracking-tight */}
-          <h1 className="font-serif text-4xl md:text-6xl text-[#2d2d2d] leading-[1.1] mb-4">
+          
+          <h1 className={`${titleFont.className} text-4xl md:text-6xl text-[#2d2d2d] leading-[1.15] max-w-3xl`}>
             {post.title}
           </h1>
         </div>
       </header>
 
-      {/* Contenido del Artículo */}
-      <div className="max-w-3xl mx-auto px-5 mt-10">
-        <div className="flex items-center gap-4 mb-12 pb-6 border-b border-gray-100">
-            <div className="text-[11px] uppercase tracking-widest text-gray-400 font-medium italic">
-              {post.createdAt 
-                ? `Publicado el ${post.createdAt.toLocaleDateString('es-UY', { day: 'numeric', month: 'long', year: 'numeric' })}`
-                : 'Fecha no disponible'
-            }
-        </div>
+      {/* Cuerpo del Artículo */}
+      <div className="max-w-3xl mx-auto px-8 mt-16">
+        {/* Info de publicación estilo 'Sobre Mí' */}
+        <div className="flex items-center gap-4 mb-12 pb-8 border-b border-gray-100">
+          <p className="text-sm text-gray-400 font-light italic">
+            Por Lic. Gimena Medrano — {post.createdAt?.toLocaleDateString('es-UY', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </p>
         </div>
 
-        {/* AJUSTE DE TIPOGRAFÍA EN EL CUERPO */}
+        {/* Contenido con la tipografía que pediste */}
         <div 
-          className="prose max-w-none 
-          /* Cuerpo de texto: Sans, más gris y con interlineado generoso */
-          text-[#555555] font-light leading-[1.8] text-lg
+          className={`prose max-w-none 
+          /* Texto Base: Gris suave, liviano y con mucho aire */
+          text-gray-600 font-light leading-[1.9] text-lg
           
-          /* Títulos internos: Serif y color oscuro café */
-          prose-headings:font-serif prose-headings:text-[#2d2d2d] prose-headings:font-normal
-          prose-h2:text-3xl prose-h3:text-2xl
+          /* Títulos internos: Usamos la titleFont (Serif) igual que en el Sobre Mí */
+          prose-headings:${titleFont.className} prose-headings:text-[#2d2d2d] prose-headings:font-normal
+          prose-h2:text-4xl prose-h2:mt-12 prose-h2:mb-6
+          prose-h3:text-2xl
           
-          /* Detalles Sage */
-          prose-strong:text-[#9ead6b] prose-strong:font-bold
-          prose-a:text-[#9ead6b] prose-a:no-underline hover:prose-a:underline
+          /* Acentos en Sage */
+          prose-strong:text-[#2d2d2d] prose-strong:font-medium
+          prose-blockquote:border-[#9ead6b] prose-blockquote:bg-[#f7f7f5] 
+          prose-blockquote:rounded-r-2xl prose-blockquote:py-2 prose-blockquote:px-8
+          prose-blockquote:font-light prose-blockquote:italic prose-blockquote:text-gray-600
           
-          /* Citas: Estilo elegante */
-          prose-blockquote:border-[#9ead6b] prose-blockquote:bg-[#f7f7f5] prose-blockquote:font-serif prose-blockquote:italic prose-blockquote:text-[#555555]"
-          
+          /* Enlaces */
+          prose-a:text-[#9ead6b] prose-a:underline-offset-4 hover:prose-a:text-[#8da05b]`
+          }
           dangerouslySetInnerHTML={{ __html: post.content || ''}}
         />
         
-        {/* Footer del artículo */}
-        <div className="mt-20 p-12 rounded-[3rem] bg-[#f7f7f5] border border-gray-100 text-center">
-            <h4 className="font-serif text-[#2d2d2d] text-2xl mb-4 italic">¿Te gustaría profundizar en este tema?</h4>
-            <p className="text-[#555555] font-light mb-8 max-w-md mx-auto leading-relaxed">Podes contactarme para una consulta personalizada o seguir explorando mis recursos digitales.</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button className="bg-[#9ead6b] text-white px-10 py-4 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#8da05b] transition-all">
+        {/* Footer del Post (Cierre igual al Sobre Mí) */}
+        <div className="mt-24 p-12 rounded-[3rem] bg-[#f7f7f5] border border-gray-100 text-center">
+            <div className="w-12 h-px bg-[#9ead6b] mx-auto mb-8" />
+            <h4 className={`${titleFont.className} text-[#2d2d2d] text-3xl mb-4`}>
+                ¿Hablamos?
+            </h4>
+            <p className="text-gray-500 font-light mb-10 max-w-md mx-auto text-lg">
+                Si sentís que este tema resuena con lo que estás viviendo, podemos buscar un espacio para charlarlo.
+            </p>
+            <div className="flex justify-center">
+              <button className="bg-[#9ead6b] text-white px-12 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-[#8da05b] transition-all shadow-lg shadow-sage-200">
                   Consultar por WhatsApp
-              </button>
-              <button className="bg-white border border-[#e3e3e3] text-[#555555] px-10 py-4 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">
-                  Ver Recursos
               </button>
             </div>
         </div>

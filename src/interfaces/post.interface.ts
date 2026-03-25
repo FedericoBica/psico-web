@@ -4,7 +4,7 @@ export interface Post {
   slug: string;
   excerpt: string;
   content: string;
-  image: string;
+  image: string | null;
   tags: string[];
   isPublished: boolean;
   createdAt: Date;
