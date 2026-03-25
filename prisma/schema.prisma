@@ -117,6 +117,7 @@ model Post {
   excerpt     String
   content     String   @db.Text
   image       String
+  tags        String[] @default([])
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
