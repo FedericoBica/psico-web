@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: post.updatedAt,
     changeFrequency: 'weekly',
-    priority: 0.6,
+    priority: 0.8,
   }));
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -32,14 +32,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 1,
+      priority: 1.0,
     },
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.8,
+      priority: 0.9,
     },
+    {
+      url: `${baseUrl}/tienda`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    },
+
   ];
 
   return [...staticRoutes, ...productEntries, ...blogEntries];

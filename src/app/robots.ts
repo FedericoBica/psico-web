@@ -1,17 +1,21 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_URL ?? 'https://psicopedagogagimenamedrano.com';
+
   return {
     rules: {
       userAgent: '*',
       allow: '/',
       disallow: [
-        '/admin/',
-        '/auth/',
-        '/profile/',
-        '/checkout/',
+        '/admin/',    // Gestión interna
+        '/auth/',     // Login/Registro
+        '/profile/',  // Datos de usuario
+        '/checkout/', // Proceso de pago
+        '/api/',      // Endpoints internos
+        '/cart',      // Carrito de compras
       ],
     },
-    sitemap: `${process.env.NEXT_PUBLIC_URL ?? 'https://tu-dominio.com'}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

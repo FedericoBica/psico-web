@@ -5,10 +5,33 @@ import { Providers } from "@/components";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s - Psico Web",
-    default: "Tienda - Psico Web",
+    template: "%s | Gimena Medrano - Psicopedagoga",
+    default: "Gimena Medrano | Psicopedagogía y Recursos Educativos",
   },
-  description: "Tienda de E-books",
+  description: "Espacio profesional de Gimena Medrano, Licenciada en Psicopedagogía. Especializada en procesos de aprendizaje, orientación y recursos terapéuticos para el desarrollo integral.",
+  keywords: [
+    "Gimena Medrano", 
+    "Psicopedagogía", 
+    "psicopedagoga Uruguay", 
+    "dificultades de aprendizaje", 
+    "recursos educativos", 
+    "orientación vocacional",
+    "E-books psicopedagógicos"
+  ],
+  
+  // Configuración para Redes Sociales (OpenGraph)
+  openGraph: {
+    title: "Gimena Medrano | Psicopedagogía",
+    description: "Recursos, artículos y herramientas para potenciar el aprendizaje y el desarrollo cognitivo.",
+    type: "website",
+    locale: "es_UY",
+    url: "https://gimenamedrano.com", // Cambialo cuando tengas el dominio final
+    siteName: "Gimena Medrano - Psicopedagoga",
+  },
+
+  // Para que los buscadores no tengan duda del autor
+  authors: [{ name: "Gimena Medrano" }],
+  creator: "Gimena Medrano",
 };
 
 export default function RootLayout({
