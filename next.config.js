@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Esto hará que Vercel ignore los errores de TypeScript y ESLint al compilar
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -9,17 +8,30 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'images.unsplash.com',
-            },
-            {
-              protocol: 'https',
-              hostname: 'res.cloudinary.com', // Para cuando subas tus propias fotos
-            },
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
-    },
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

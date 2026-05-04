@@ -1,6 +1,13 @@
 export const revalidate = 60;
 
+import type { Metadata } from 'next';
 import { getPaginatedProductsWithImages } from '@/actions';
+
+export const metadata: Metadata = {
+  title: 'Inicio',
+  description: 'Gimena Medrano, Licenciada en Psicopedagogía en Uruguay. Recursos educativos, materiales psicopedagógicos y orientación para potenciar el aprendizaje de niños, adolescentes y adultos.',
+  alternates: { canonical: '/' },
+};
 import { Pagination, ProductGrid, Title } from '@/components';
 import { SobreMi } from '@/components/ui/about/AboutMe';
 import { Contacto } from '@/components/ui/contacto/Contacto';

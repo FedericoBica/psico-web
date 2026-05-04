@@ -1,6 +1,6 @@
 export const revalidate = 604800; //7 días
 
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { titleFont } from "@/config/fonts";
@@ -26,6 +26,34 @@ interface Props {
   };
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const product = await getProductBySlug(params.slug);
+  if (!product) return {};
+
+  const description = product.description.slice(0, 160);
+  const image = product.images[0] ?? '';
+
+  return {
+    title: product.title,
+    description,
+    openGraph: {
+      title: product.title,
+      description,
+      type: 'website',
+      images: image ? [{ url: image, alt: product.title }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.title,
+      description,
+      images: image ? [image] : [],
+    },
+    alternates: {
+      canonical: `/product/${product.slug}`,
+    },
+  };
+}
+
 export default async function ProductBySlugPage({ params }: Props) {
   const { slug } = params;
   const product = await getProductBySlug(slug);
@@ -34,7 +62,28 @@ export default async function ProductBySlugPage({ params }: Props) {
     notFound();
   }
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.description,
+    image: product.images,
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "UYU",
+      availability: "https://schema.org/InStock",
+      seller: { "@type": "Person", name: "Gimena Medrano" },
+    },
+    brand: { "@type": "Person", name: "Gimena Medrano" },
+  };
+
 return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+    />
     <div className="mt-5 mb-20 flex flex-col px-4 sm:px-0">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
@@ -103,5 +152,6 @@ return (
         />
       </div>
     </div>
+    </>
   );
 }

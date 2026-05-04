@@ -2,9 +2,40 @@ import { getPostBySlug } from "@/actions/blog/get-post-by-slug";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { titleFont } from "@/config/fonts";
+import { Metadata } from "next";
 
 interface Props {
   params: { slug: string; };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug);
+  if (!post || !post.title) return {};
+
+  const description = (post.excerpt ?? post.title).slice(0, 160);
+
+  return {
+    title: post.title,
+    description,
+    openGraph: {
+      title: post.title,
+      description,
+      type: "article",
+      publishedTime: post.createdAt?.toISOString(),
+      modifiedTime: post.updatedAt?.toISOString(),
+      authors: ["Gimena Medrano"],
+      images: post.image ? [{ url: post.image, alt: post.title }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: post.image ? [post.image] : [],
+    },
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
+  };
 }
 
 export default async function PostBySlugPage({ params }: Props) {
@@ -13,7 +44,33 @@ export default async function PostBySlugPage({ params }: Props) {
 
   if (!post) notFound();
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt ?? post.title,
+    image: post.image ?? undefined,
+    datePublished: post.createdAt?.toISOString(),
+    dateModified: post.updatedAt?.toISOString(),
+    author: {
+      "@type": "Person",
+      name: "Gimena Medrano",
+      jobTitle: "Licenciada en Psicopedagogía",
+    },
+    publisher: {
+      "@type": "Person",
+      name: "Gimena Medrano",
+    },
+    keywords: post.tags?.join(", "),
+    inLanguage: "es-UY",
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+    />
     <article className="min-h-screen pb-20 bg-white">
       {/* Header Editorial */}
       <header className="relative w-full h-[70vh] flex items-end pb-20 overflow-hidden bg-[#FDFBF7]">
@@ -89,5 +146,6 @@ export default async function PostBySlugPage({ params }: Props) {
         </div>
       </div>
     </article>
+    </>
   );
 }

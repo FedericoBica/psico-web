@@ -1,7 +1,14 @@
 // src/app/(shop)/tienda/page.tsx
 export const revalidate = 60;
 
+import type { Metadata } from 'next';
 import { getPaginatedProductsWithImages } from '@/actions';
+
+export const metadata: Metadata = {
+  title: 'Tienda',
+  description: 'Materiales y cuadernos de actividades psicopedagógicos creados por la Lic. Gimena Medrano. Recursos digitales y físicos para acompañar el aprendizaje.',
+  alternates: { canonical: '/tienda' },
+};
 import { Pagination, ProductGrid } from '@/components';
 
 interface Props {

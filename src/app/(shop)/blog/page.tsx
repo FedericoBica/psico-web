@@ -1,8 +1,15 @@
 import { getPosts } from "@/actions";
 import { PostCard } from "@/components/blog/PostCard";
 import { Title } from "@/components";
+import type { Metadata } from 'next';
 
-export const revalidate = 3600; 
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: 'Blog — Materiales y Recursos',
+  description: 'Artículos y guías psicopedagógicas escritas por la Lic. Gimena Medrano para acompañar el desarrollo del aprendizaje y los procesos cognitivos.',
+  alternates: { canonical: '/blog' },
+};
 
 export default async function BlogPage() {
   const posts = await getPosts();
