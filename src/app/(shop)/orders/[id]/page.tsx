@@ -119,6 +119,26 @@ export default async function OrderPage({ params, searchParams }: Props) {
               <p className="font-bold">{order.buyerEmail ?? "Usuario registrado"}</p>
             </div>
 
+            {order.shippingName && (
+              <div className="mb-4 bg-[#f7f7f5] border border-[#e3e3e3] rounded-xl p-4 space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#9ead6b] mb-2">
+                  Datos de envío (libro físico)
+                </p>
+                <p className="text-sm font-medium text-gray-800">{order.shippingName}</p>
+                {order.shippingPhone && (
+                  <p className="text-sm text-gray-600">{order.shippingPhone}</p>
+                )}
+                {order.shippingAddress && (
+                  <p className="text-sm text-gray-600">{order.shippingAddress}</p>
+                )}
+                {(order.shippingCity || order.shippingDept) && (
+                  <p className="text-sm text-gray-600">
+                    {[order.shippingCity, order.shippingDept].filter(Boolean).join(', ')}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-y-2 text-gray-700">
               <span>Productos</span>
               <span className="text-right">{order.itemsInOrder}</span>
