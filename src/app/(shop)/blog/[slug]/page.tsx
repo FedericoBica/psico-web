@@ -11,7 +11,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
-  if (!post || !post.title) return {};
+  if (!post || !post.title || !post.isPublished) return {};
 
   const description = (post.excerpt ?? post.title).slice(0, 160);
 
@@ -43,7 +43,8 @@ export default async function PostBySlugPage({ params }: Props) {
   const { slug } = params;
   const post = await getPostBySlug(slug);
 
-  if (!post) notFound();
+  // Los borradores no se muestran al público (ni los indexa Google)
+  if (!post || !post.isPublished) notFound();
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -87,7 +88,7 @@ export default async function PostBySlugPage({ params }: Props) {
         />
         <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
 
-        <div className="relative z-10 px-8 pt-10 pb-4 md:pt-0 md:pb-0 max-w-5xl mx-auto w-full">
+        <div className="relative z-10 px-5 sm:px-8 pt-8 pb-4 md:pt-0 md:pb-0 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-8 h-px bg-[#9ead6b]" />
             <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-[#9ead6b]">
@@ -95,7 +96,7 @@ export default async function PostBySlugPage({ params }: Props) {
             </span>
           </div>
           
-          <h1 className={`${titleFont.className} text-4xl md:text-6xl text-[#2d2d2d] leading-[1.15] max-w-3xl`}>
+          <h1 className={`${titleFont.className} text-[1.6rem] sm:text-4xl md:text-5xl lg:text-6xl text-[#2d2d2d] leading-[1.2] md:leading-[1.15] [text-wrap:balance] break-words`}>
             {post.title}
           </h1>
         </div>
@@ -145,9 +146,13 @@ export default async function PostBySlugPage({ params }: Props) {
                 Si sentís que este tema resuena con lo que estás viviendo, podemos buscar un espacio para charlarlo.
             </p>
             <div className="flex justify-center">
-              <button className="bg-[#9ead6b] text-white px-12 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-[#8da05b] transition-all shadow-lg shadow-sage-200">
+              <a
+                href={`https://wa.me/59897454505?text=${encodeURIComponent(`Hola Gimena, leí tu artículo "${post.title}" y me gustaría hacerte una consulta.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#9ead6b] text-white px-12 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-[#8da05b] transition-all shadow-lg shadow-sage-200">
                   Consultar por WhatsApp
-              </button>
+              </a>
             </div>
         </div>
       </div>

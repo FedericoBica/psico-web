@@ -1,7 +1,7 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import { getPaginatedProductsWithImages } from '@/actions';
+import { getPaginatedProductsWithImages, getPosts } from '@/actions';
 
 export const metadata: Metadata = {
   title: 'Inicio',
@@ -14,6 +14,7 @@ import { Contacto } from '@/components/ui/contacto/Contacto';
 import { ProductHero } from '@/components/ui/product-hero/ProductHero';
 import { Servicios } from '@/components/ui/servicios/Servicio';
 import { TiendaPreview } from '@/components/ui/tienda-preview/TIendaPreview';
+import { BlogPreview } from '@/components/ui/blog-preview/BlogPreview';
 
 // These new sections you'll create in src/components/ui/sections/
 // import { SobreMi } from '@/components/ui/sections/SobreMi';
@@ -28,7 +29,10 @@ interface Props {
 
 export default async function Home({ searchParams }: Props) {
   const page = searchParams.page ? parseInt(searchParams.page) : 1;
-  const { products, currentPage, totalPages } = await getPaginatedProductsWithImages({ page });
+  const [{ products, currentPage, totalPages }, posts] = await Promise.all([
+    getPaginatedProductsWithImages({ page }),
+    getPosts(),
+  ]);
   const featuredProduct = products[0] ?? null;
 
   return (
@@ -37,6 +41,7 @@ export default async function Home({ searchParams }: Props) {
       <SobreMi />
       <Servicios /> 
       <TiendaPreview product={featuredProduct} />
+      <BlogPreview posts={posts.slice(0, 3)} />
       <Contacto /> 
     </>
   );
