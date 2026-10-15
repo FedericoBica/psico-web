@@ -5,6 +5,7 @@
 // - Líneas cortas después de un texto que termina en ":" → lista con viñetas
 // - Líneas cortas sin punto final o preguntas sueltas → subtítulo
 // - Las líneas cortadas a la mitad (texto pegado de un PDF) se unen
+// - Si el texto empieza repitiendo el título del post, se quita
 // Si el contenido ya tiene HTML, se devuelve sin cambios.
 
 const HTML_TAG = /<(p|h[1-6]|ul|ol|li|br|div|strong|em|blockquote)\b/i;
@@ -32,12 +33,28 @@ const joinLines = (lines: string[]) =>
 const isQuestionHeading = (text: string) =>
   text.length <= 80 && /^¿.*\?$/.test(text);
 
-export const formatPostContent = (content: string): string => {
+const normalize = (text: string) => text.replace(/\s+/g, ' ').trim().toLowerCase();
+
+// Quita las primeras líneas si repiten el título (puede venir cortado en varias líneas).
+const removeTitle = (content: string, title: string) => {
+  const target = normalize(title);
+  if (!target) return content;
+
+  const lines = content.split('\n');
+  let start = '';
+  for (let i = 0; i < Math.min(lines.length, 4); i++) {
+    start = normalize(`${start} ${lines[i]}`);
+    if (start === target) return lines.slice(i + 1).join('\n');
+    if (!target.startsWith(start)) break;
+  }
+  return content;
+};
+
+export const formatPostContent = (content: string, title = ''): string => {
   if (!content) return '';
   if (HTML_TAG.test(content)) return content;
 
-  const blocks = content
-    .replace(/\r\n?/g, '\n')
+  const blocks = removeTitle(content.replace(/\r\n?/g, '\n'), title)
     .split(/\n\s*\n/)
     .map((block) => block.split('\n').map((line) => escapeHtml(line.trim())).filter(Boolean))
     .filter((lines) => lines.length > 0);

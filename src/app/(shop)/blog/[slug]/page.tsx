@@ -132,7 +132,7 @@ export default async function PostBySlugPage({ params }: Props) {
           prose-a:text-[#9ead6b] prose-a:underline-offset-4 hover:prose-a:text-[#8da05b]`
           }
           style={{ '--title-font': titleFont.style.fontFamily } as React.CSSProperties}
-          dangerouslySetInnerHTML={{ __html: formatPostContent(post.content || '') }}
+          dangerouslySetInnerHTML={{ __html: formatPostContent(post.content || '', post.title || '') }}
         />
         
         {/* Footer del Post (Cierre igual al Sobre Mí) */}
