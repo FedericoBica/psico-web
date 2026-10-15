@@ -44,9 +44,9 @@ export const Footer = () => {
               className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
               <IoLogoInstagram size={16} className="text-[#9ead6b]" /> @Lic.GimenaMedrano
             </Link>
-            <Link href="/" target="_blank"
+            <Link href="https://www.google.com/maps/search/?api=1&query=Francisco Anzani 1657, 11600 Montevideo, Departamento de Montevideo" target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
-              <IoLocationOutline size={16} className="text-[#9ead6b]" /> Carrasco, Montevideo
+              <IoLocationOutline size={16} className="text-[#9ead6b]" /> Buceo, Montevideo
             </Link>
           </div>
         </div>

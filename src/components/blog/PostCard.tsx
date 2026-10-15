@@ -16,8 +16,8 @@ export const PostCard = ({ post }: Props) => {
       className="group flex flex-col h-full bg-white transition-all duration-300 rounded-[2rem] overflow-hidden hover:shadow-lg hover:shadow-sage-100/50 border border-gray-100/50"
     >
       {/* Contenedor de Imagen */}
-      {/* ESTÉTICA: Bordes redondeados grandes arriba, aspecto 4:3, fondo neutro sutil */}
-      <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-50">
+      {/* ESTÉTICA: Bordes redondeados grandes arriba, misma proporción que las imágenes (1200x630) para no cortar el texto */}
+      <div className="relative w-full aspect-[1200/630] overflow-hidden bg-gray-50">
         <Image
           src={post.image || '/imgs/placeholder.jpg'}
           alt={post.title}

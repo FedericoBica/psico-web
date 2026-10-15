@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { titleFont } from "@/config/fonts";
 import { Metadata } from "next";
+import { formatPostContent } from "@/utils";
 
 interface Props {
   params: { slug: string; };
@@ -73,17 +74,20 @@ export default async function PostBySlugPage({ params }: Props) {
     />
     <article className="min-h-screen pb-20 bg-white">
       {/* Header Editorial */}
-      <header className="relative w-full h-[70vh] flex items-end pb-20 overflow-hidden bg-[#FDFBF7]">
+      {/* En pantallas chicas la imagen se ve completa (tiene texto) y el título va debajo */}
+      <header className="relative w-full bg-[#FDFBF7] md:h-[70vh] md:flex md:items-end md:pb-20 md:overflow-hidden">
         <Image
           src={post.image || '/imgs/placeholder.jpg'}
           alt={post.title || 'Psicopedagogia'}
-          fill
-          className="object-cover opacity-90 transition-transform duration-700 hover:scale-105"
+          width={1200}
+          height={630}
+          sizes="100vw"
+          className="w-full h-auto md:absolute md:inset-0 md:h-full md:object-cover md:opacity-90 transition-transform duration-700 md:hover:scale-105"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
-        
-        <div className="relative z-10 px-8 max-w-5xl mx-auto w-full">
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
+
+        <div className="relative z-10 px-8 pt-10 pb-4 md:pt-0 md:pb-0 max-w-5xl mx-auto w-full">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-8 h-px bg-[#9ead6b]" />
             <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-[#9ead6b]">
@@ -113,8 +117,9 @@ export default async function PostBySlugPage({ params }: Props) {
           text-gray-600 font-light leading-[1.9] text-lg
           
           /* Títulos internos: Usamos la titleFont (Serif) igual que en el Sobre Mí */
-          prose-headings:${titleFont.className} prose-headings:text-[#2d2d2d] prose-headings:font-normal
-          prose-h2:text-4xl prose-h2:mt-12 prose-h2:mb-6
+          prose-headings:[font-family:var(--title-font)] prose-headings:text-[#2d2d2d] prose-headings:font-normal
+          prose-h2:text-3xl prose-h2:mt-14 prose-h2:mb-6
+          prose-p:my-6 prose-li:my-2 prose-li:marker:text-[#9ead6b]
           prose-h3:text-2xl
           
           /* Acentos en Sage */
@@ -126,7 +131,8 @@ export default async function PostBySlugPage({ params }: Props) {
           /* Enlaces */
           prose-a:text-[#9ead6b] prose-a:underline-offset-4 hover:prose-a:text-[#8da05b]`
           }
-          dangerouslySetInnerHTML={{ __html: post.content || ''}}
+          style={{ '--title-font': titleFont.style.fontFamily } as React.CSSProperties}
+          dangerouslySetInnerHTML={{ __html: formatPostContent(post.content || '') }}
         />
         
         {/* Footer del Post (Cierre igual al Sobre Mí) */}
